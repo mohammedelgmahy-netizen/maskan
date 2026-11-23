@@ -77,11 +77,11 @@ button,input,select,textarea{font:inherit;color:inherit}@media (max-width:760px)
   .nav{display:none}
   .bottom{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);
     padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));justify-content:space-around}
-  .bottom a{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;font-size:16px;color:var(--muted);font-weight:800;padding:9px 4px;border-radius:14px;min-width:56px;gap:4px}
-  .bottom a svg{width:36px;height:36px}
+  .bottom a{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;font-size:15px;color:var(--ink);font-weight:800;padding:6px 2px;border-radius:14px;min-width:56px;gap:4px}
+  .bottom a .bico{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 15%,transparent)}   .bottom a .bico svg{width:32px;height:32px}   .bottom a.on .bico{background:var(--c);color:#fff}
   .bottom a.on{color:var(--brand)}
   .bottom a.add{color:var(--brand-ink);background:var(--brand);border-radius:12px}
-  main{padding-bottom:120px}
+  main{padding-bottom:130px}
   .menu-btn{display:none!important}
   .bottom a{min-width:0;flex:1}
 }
@@ -1288,8 +1288,8 @@ function navHTML(cur){
   const isDash=cur.startsWith("dash");
   $("#nav").innerHTML=items.map(([k,t])=>`<a href="#${k}" class="${(cur===k||(k==="dashboard"&&isDash))?"on":""}">${t}${k==="favs"&&S.favs.length?`<span class="cnt num">${S.favs.length}</span>`:""}${k==="dashboard"?`<span class="cnt num">${S.leads.filter(c=>c.stage==="new").length}</span>`:""}</a>`).join("");
   const MORE_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
-  const mob=(BROKER_MODE?[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["add","أضف",IC.plus],["dashboard","لوحتي",IC.dash]]:[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["map","الخريطة",IC.map],["favs","المفضلة",IC.heart]]).concat([["more","المزيد",MORE_IC]]);
-  $("#bottomNav").innerHTML=mob.map(([k,t,i])=>`<a href="#${k}" ${k==="more"?'data-act="more"':""} class="${k==="add"?"add ":""}${(cur===k||(k==="dashboard"&&isDash))?"on":""}">${i}${t}</a>`).join("");
+  const mob=(BROKER_MODE?[["home","الرئيسية",ICN.house,"#0F8A6C"],["listings","العقارات",ICN.city,"#2F7FC1"],["add","أضف",IC.plus,"#0F5C4D"],["dashboard","لوحتي",ICN.chart,"#C98A22"]]:[["home","الرئيسية",ICN.house,"#0F8A6C"],["listings","العقارات",ICN.city,"#2F7FC1"],["map","الخريطة",ICN.mappin,"#1C9AA8"],["favs","المفضلة",ICN.heart,"#D2475B"]]).concat([["more","المزيد",MORE_IC,"#5A6B67"]]);
+  $("#bottomNav").innerHTML=mob.map(([k,t,i,c])=>`<a href="#${k}" ${k==="more"?'data-act="more"':""} style="--c:${c}" class="${(cur===k||(k==="dashboard"&&isDash))?"on":""}"><span class="bico">${i}</span>${t}</a>`).join("");
 }
 function cmpBar(){
   const n=S.compare.length; const h=location.hash.slice(1);
