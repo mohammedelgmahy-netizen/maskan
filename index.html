@@ -1,0 +1,1424 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0F5C4D">
+<meta name="description" content="مسكن للتسويق العقاري: شقق وفلل وشاليهات ومحلات للبيع والإيجار في مصر">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="مسكن">
+<style>:root{color-scheme:light}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+</head>
+<body>
+<title>مسكن للتسويق العقاري</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style id="appStyle">
+/* Layout: app shell — sticky top bar on desktop, bottom tab bar on phones; content in a 1200px column. Nile green + brass accent. */
+:root{
+  --bg:#F3F6F5; --surface:#FFFFFF; --surface-2:#E8EFED; --ink:#14221F; --muted:#5A6B67; --line:#D5E0DC;
+  --brand:#0F5C4D; --brand-2:#0B4A3E; --brand-ink:#FFFFFF; --brand-soft:#DCEDE7;
+  --accent:#C98A22; --accent-soft:#FAEED8; --accent-ink:#5A3A05;
+  --good:#1D8A57; --good-soft:#DDF3E7; --warn:#B9700E; --warn-soft:#FBEBD2; --bad:#B83A2E; --bad-soft:#F8DEDA;
+  --shadow:0 1px 2px rgba(15,40,35,.06),0 6px 18px rgba(15,40,35,.07);
+  --f-display:"Alexandria","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1513; --surface:#13201D; --surface-2:#1A2B27; --ink:#E5EEEB; --muted:#93A6A1; --line:#253934;
+  --brand:#3DB394; --brand-2:#5CCBAD; --brand-ink:#04201A; --brand-soft:#173830;
+  --accent:#E6AC4C; --accent-soft:#3A2B12; --accent-ink:#F7DDAF;
+  --good:#4CC488; --good-soft:#163526; --warn:#E5A14A; --warn-soft:#3A2A12; --bad:#EE7B6E; --bad-soft:#3D1D19;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1513; --surface:#13201D; --surface-2:#1A2B27; --ink:#E5EEEB; --muted:#93A6A1; --line:#253934;
+  --brand:#3DB394; --brand-2:#5CCBAD; --brand-ink:#04201A; --brand-soft:#173830;
+  --accent:#E6AC4C; --accent-soft:#3A2B12; --accent-ink:#F7DDAF;
+  --good:#4CC488; --good-soft:#163526; --warn:#E5A14A; --warn-soft:#3A2A12; --bad:#EE7B6E; --bad-soft:#3D1D19;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{direction:rtl}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;direction:rtl}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--surface)}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.3;margin:0;text-wrap:balance;font-weight:700}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}@media (max-width:760px){input,select,textarea{font-size:16px}}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.num{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;min-height:64px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-mark{width:38px;height:38px;border-radius:10px;background:var(--brand);display:grid;place-items:center;flex:none}
+.logo-mark svg{width:22px;height:22px}
+.logo b{font-family:var(--f-display);font-size:20px;font-weight:800;color:var(--brand)}
+.logo span{display:block;font-size:11px;color:var(--muted);margin-top:-4px;letter-spacing:.02em}
+.nav{display:flex;gap:4px;margin-inline-start:auto}
+.nav a{padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600;color:var(--muted);font-size:14px;display:flex;gap:6px;align-items:center}
+.nav a:hover{background:var(--surface-2);color:var(--ink)}
+.nav a.on{color:var(--brand);background:var(--brand-soft)}
+.nav a .cnt{background:var(--accent);color:#fff;border-radius:99px;font-size:11px;padding:0 6px;line-height:18px}
+.bottom{display:none}
+@media (max-width:860px){
+  .nav{display:none}
+  .bottom{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);
+    padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));justify-content:space-around}
+  .bottom a{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;font-size:11px;color:var(--muted);font-weight:600;padding:4px 6px;border-radius:8px;min-width:56px}
+  .bottom a svg{width:22px;height:22px}
+  .bottom a.on{color:var(--brand)}
+  .bottom a.add{color:var(--brand-ink);background:var(--brand);border-radius:12px}
+  main{padding-bottom:84px}
+}
+
+/* buttons & inputs */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 16px;border-radius:10px;font-weight:600;cursor:pointer;text-decoration:none;font-size:14px;white-space:nowrap}
+.btn:hover{border-color:var(--brand)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.btn.primary:hover{background:var(--brand-2)}
+.btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.wa{background:#1E9E55;border-color:#1E9E55;color:#fff}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn.danger{color:var(--bad)}
+.btn svg{width:18px;height:18px;flex:none}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:13px;font-weight:600;color:var(--muted)}
+.inp{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px;min-height:42px}
+.inp:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+textarea.inp{min-height:90px;resize:vertical}
+.grid-form{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;font-size:13px;cursor:pointer;font-weight:500}
+.chip.on{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.check{display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer}
+
+/* hero */
+.hero{background:linear-gradient(160deg,var(--brand) 0%,var(--brand-2) 100%);color:#fff;position:relative;overflow:hidden}
+.hero .wrap{padding-block:44px 64px;position:relative;z-index:1}
+.hero-skyline{position:absolute;inset:auto 0 0 0;height:120px;opacity:.16;z-index:0}
+.hero h1{font-size:clamp(28px,5vw,44px);font-weight:800;max-width:16ch}
+.hero p{opacity:.85;margin:8px 0 22px;max-width:52ch}
+:root[data-theme="dark"] .hero,.dark-hero{color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero{background:linear-gradient(160deg,#12463B 0%,#0B2F28 100%)}}
+:root[data-theme="dark"] .hero{background:linear-gradient(160deg,#12463B 0%,#0B2F28 100%)}
+.search{background:var(--surface);color:var(--ink);border-radius:16px;padding:14px;box-shadow:var(--shadow);max-width:920px}
+.search .tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{border:none;background:var(--surface-2);padding:7px 18px;border-radius:9px;font-weight:700;cursor:pointer;color:var(--muted)}
+.tab.on{background:var(--brand);color:var(--brand-ink)}
+.search-row{display:grid;grid-template-columns:2fr 1.3fr 1.3fr auto;gap:10px}
+@media (max-width:760px){.search-row{grid-template-columns:1fr 1fr}.search-row .btn{grid-column:1/-1}}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.quick a{color:#fff;text-decoration:none;font-size:13px;border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:4px 12px}
+.quick a:hover{background:rgba(255,255,255,.12)}
+
+/* sections */
+section.block{padding-block:28px}
+.sec-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.sec-head h2{font-size:22px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
+
+/* listing card */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.card .ph{position:relative;aspect-ratio:16/10;background:var(--surface-2);display:block;max-width:100%}
+.card .ph img,.card .ph svg{width:100%;height:100%;object-fit:cover;display:block}
+.badges{position:absolute;top:10px;right:10px;display:flex;gap:6px;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--surface);color:var(--ink)}
+.badge.gold{background:var(--accent);color:#fff}
+.badge.green{background:var(--good);color:#fff}
+.badge.dark{background:rgba(10,25,22,.75);color:#fff}
+.fav{position:absolute;top:8px;left:8px;width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,.92);display:grid;place-items:center;cursor:pointer;color:#B83A2E}
+.fav svg{width:20px;height:20px}
+.card .body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.price{font-family:var(--f-display);font-weight:800;font-size:20px;color:var(--brand)}
+.price small{font-size:12px;font-weight:500;color:var(--muted);font-family:var(--f-body)}
+.card h3{font-size:15px;font-weight:600;font-family:var(--f-body)}
+.card h3 a{text-decoration:none}
+.loc{display:flex;gap:4px;align-items:center;color:var(--muted);font-size:13px}
+.loc svg{width:15px;height:15px;flex:none}
+.specs{display:flex;gap:14px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px;margin-top:auto;flex-wrap:wrap}
+.specs span{display:flex;gap:4px;align-items:center}
+.specs svg{width:16px;height:16px}
+.card .foot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cmp{font-size:12px;display:flex;gap:4px;align-items:center;cursor:pointer;color:var(--muted)}
+
+/* areas */
+.areas{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.area{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;text-decoration:none;display:flex;flex-direction:column;gap:2px}
+.area:hover{border-color:var(--brand)}
+.area b{font-family:var(--f-display);font-size:16px}
+
+/* listings layout */
+.layout{display:grid;grid-template-columns:280px 1fr;gap:22px;padding-block:22px;align-items:start}
+.layout>*{min-width:0}
+.filters{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:14px;position:sticky;top:84px}
+.filters h3{font-size:16px}
+.filters summary{list-style:none;cursor:pointer}
+@media (max-width:900px){.layout{grid-template-columns:1fr}.filters{position:static}}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px}
+.seg button{border:none;background:transparent;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:36px;text-align:center;color:var(--muted)}
+
+/* map */
+.mapbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
+.mapbox svg.map{width:100%;height:auto;display:block}
+.pin{cursor:pointer}
+.pin rect{transition:transform .1s}
+.pin:hover rect,.pin.on rect{fill:var(--accent)}
+.map-pop{position:absolute;bottom:12px;right:12px;width:300px;max-width:calc(100% - 24px)}
+.map-legend{display:flex;gap:14px;padding:10px 14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);flex-wrap:wrap}
+
+/* detail */
+.detail{display:grid;grid-template-columns:1fr 360px;gap:24px;padding-block:22px;align-items:start}
+.detail>*{min-width:0}
+@media (max-width:960px){.detail{grid-template-columns:1fr}}
+.gallery .main{aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--surface-2);max-width:100%}
+.gallery .main img,.gallery .main svg{width:100%;height:100%;object-fit:cover;display:block}
+.thumbs{display:flex;gap:8px;margin-top:8px;overflow-x:auto}
+.thumbs button{width:92px;aspect-ratio:16/10;border-radius:8px;overflow:hidden;border:2px solid transparent;padding:0;cursor:pointer;flex:none;background:var(--surface-2)}
+.thumbs button.on{border-color:var(--brand)}
+.thumbs img,.thumbs svg{width:100%;height:100%;object-fit:cover;display:block}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.panel+.panel{margin-top:16px}
+.panel h3{font-size:17px;margin-bottom:12px}
+.kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.kv div{background:var(--surface-2);border-radius:10px;padding:10px 12px}
+.kv>div>span{display:block;font-size:12px;color:var(--muted)}
+.kv b{font-size:15px}
+.feat{display:flex;flex-wrap:wrap;gap:8px}
+.feat span{background:var(--brand-soft);color:var(--brand);border-radius:8px;padding:4px 10px;font-size:13px;font-weight:600}
+.sticky-side{position:sticky;top:84px;display:flex;flex-direction:column;gap:16px}
+.private{border:1px dashed var(--accent);background:var(--accent-soft)}
+.private h3{color:var(--accent-ink)}
+.broker{display:flex;gap:12px;align-items:center}
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:18px;flex:none}
+.phone-line{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--surface-2);border-radius:10px;padding:8px 12px;margin-top:10px}
+.calc-out{background:var(--brand-soft);border-radius:10px;padding:12px;margin-top:12px;display:grid;gap:4px}
+.calc-out b{color:var(--brand);font-family:var(--f-display);font-size:20px}
+
+/* dashboard */
+.dash-tabs{display:flex;gap:6px;overflow-x:auto;padding-block:16px 4px}
+.dash-tabs a{padding:8px 16px;border-radius:10px;text-decoration:none;font-weight:700;color:var(--muted);background:var(--surface);border:1px solid var(--line);white-space:nowrap}
+.dash-tabs a.on{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.kpi>span{color:var(--muted);font-size:13px;font-weight:600}
+.kpi b{display:block;font-family:var(--f-display);font-size:26px;font-weight:800;margin-top:4px}
+.kpi em{font-style:normal;font-size:12px;color:var(--good);font-weight:600}
+.two{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;margin-top:16px}
+.two>*{min-width:0}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+.list{display:flex;flex-direction:column}
+.list .row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.list .row:last-child{border-bottom:none}
+.list .row>div{min-width:0;flex:1}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.p-new{background:var(--brand-soft);color:var(--brand)}
+.p-contacted{background:var(--surface-2);color:var(--ink)}
+.p-viewing{background:var(--accent-soft);color:var(--accent-ink)}
+.p-negotiation{background:var(--warn-soft);color:var(--warn)}
+.p-won{background:var(--good-soft);color:var(--good)}
+.p-lost{background:var(--bad-soft);color:var(--bad)}
+.p-late{background:var(--bad-soft);color:var(--bad)}
+.board{display:grid;grid-template-columns:repeat(6,minmax(220px,1fr));gap:12px;overflow-x:auto;padding-bottom:10px}
+.col{background:var(--surface-2);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:10px;min-height:200px}
+.col h4{font-size:14px;display:flex;justify-content:space-between;align-items:center;font-family:var(--f-body);font-weight:700}
+.lead{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.lead b{font-size:14px}
+.lead .acts{display:flex;gap:4px;flex-wrap:wrap}
+.match{color:var(--brand);font-weight:700;text-decoration:none}
+.tbl-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:right;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:700;background:var(--surface-2)}
+tr:last-child td{border-bottom:none}
+.bars{display:flex;align-items:end;gap:10px;height:170px;padding-top:10px}
+.bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:end;min-width:0}
+.bars .stack{width:100%;max-width:44px;display:flex;flex-direction:column;justify-content:end;border-radius:6px 6px 0 0;overflow:hidden}
+.bars .rec{background:var(--brand)}
+.bars .exp{background:var(--accent)}
+.bars small{font-size:11px;color:var(--muted)}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:4px;vertical-align:middle}
+.funnel .f{display:grid;grid-template-columns:90px 1fr 34px;gap:10px;align-items:center;margin-bottom:8px;font-size:13px}
+.funnel .track{background:var(--surface-2);border-radius:6px;height:12px;overflow:hidden}
+.funnel .fill{height:100%;background:var(--brand);border-radius:6px}
+.drawer{background:var(--surface);border:1px solid var(--brand);border-radius:14px;padding:16px;margin-bottom:16px}
+
+/* compare */
+.cmp-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:45;background:var(--ink);color:var(--bg);border-radius:12px;padding:8px 8px 8px 8px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);font-weight:600;font-size:14px;max-width:calc(100% - 32px)}
+.cmp-bar span{padding-inline-start:8px}
+@media (max-width:860px){.cmp-bar{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+
+.toast{position:fixed;top:calc(76px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;z-index:99;font-weight:600;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+.footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px;color:var(--muted);font-size:13px}
+.footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.linkbtn{background:none;border:none;color:var(--brand);font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
+/* side menu */
+.side{position:fixed;top:0;bottom:0;right:0;width:256px;z-index:70;background:var(--surface);border-left:1px solid var(--line);display:flex;flex-direction:column;overflow-y:auto;padding:calc(14px + env(safe-area-inset-top,0px)) 12px calc(14px + env(safe-area-inset-bottom,0px)) 12px;padding-right:max(12px,env(safe-area-inset-right,0px))}
+.side .logo{padding:4px 8px 16px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.side h5{margin:14px 10px 6px;font-size:11px;letter-spacing:.06em;color:var(--muted);font-weight:700}
+.side a.it{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;text-decoration:none;font-weight:600;color:var(--ink);font-size:14px}
+.side a.it .ico{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;flex:none;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.side a.it .ico svg{width:19px;height:19px}
+.side a.it:hover{background:var(--surface-2)}
+.side a.it.on{background:var(--brand-soft);color:var(--brand)}
+.side a.it.on .ico{background:var(--c);color:#fff}
+.side a.it .cnt{margin-inline-start:auto;background:var(--accent);color:#fff;border-radius:99px;font-size:11px;padding:0 7px;line-height:18px}
+.side .add-btn{margin:12px 4px 0}
+.side .side-foot{margin-top:auto;padding:12px 8px 0;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.menu-btn{display:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;width:42px;height:42px;cursor:pointer;place-items:center;margin-inline-start:auto}
+.menu-btn svg{width:22px;height:22px}
+.scrim{position:fixed;inset:0;background:rgba(5,15,12,.45);z-index:65}
+@media (min-width:861px){ body{padding-right:256px} .top{display:none} .dash-tabs{display:none} .toast{top:calc(20px + env(safe-area-inset-top,0px))} .cmp-bar{left:calc(50% - 128px)} }
+@media (max-width:860px){ .side{transform:translateX(105%);transition:transform .2s;box-shadow:var(--shadow)} .side.open{transform:none} .menu-btn{display:grid} }
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div id="root"></div>
+<script type="application/json" id="siteData"></script>
+<script id="main">
+/* ========= الإعدادات (بتتغير من لوحة السمسار ← الإعدادات) ========= */
+const SITE = (()=>{ try{ const t=document.getElementById("siteData").textContent.trim(); if(t.startsWith("{")) return JSON.parse(t); }catch(e){} return null; })();
+const SB_CFG = window.MASKAN_SUPABASE || null;
+const SUPA = !!(SB_CFG && window.supabase); // النسخة اللي على السيرفر (Supabase)
+let sb = SUPA ? window.supabase.createClient(SB_CFG.url, SB_CFG.key) : null;
+const DEMO = !window.claude && !SUPA; // نسخة محلية للتجربة
+/* تثبيت البرنامج على الموبايل والكمبيوتر */
+let deferredInstall=null;
+const isStandalone=()=>{ try{ return matchMedia("(display-mode: standalone)").matches || navigator.standalone===true; }catch(e){ return false; } };
+if(SUPA){ window.addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferredInstall=e; try{ render(true); }catch(_){} });
+  window.addEventListener("appinstalled",()=>{ deferredInstall=null; toast("البرنامج اتثبت ✓"); });
+  if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+async function doInstall(){
+  if(deferredInstall){ deferredInstall.prompt(); try{ await deferredInstall.userChoice; }catch(e){} deferredInstall=null; render(true); return; }
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  toast(ios?"من Safari: دوس زرار المشاركة ⬆️ وبعدين «إضافة إلى الشاشة الرئيسية»":"من قايمة المتصفح (⋮) اختار «تثبيت التطبيق» أو «إضافة للشاشة الرئيسية»");
+}
+let APP = { name: "مسكن", tagline: "للتسويق العقاري" };
+let BROKER = { name: "محمد", phone: "01012345678", office: "مكتب مسكن - القاهرة" };
+let EXTRA = { bio:"", reviews:[] };
+if(SITE && SITE.settings){ const t=SITE.settings; EXTRA={bio:t.bio||"",reviews:Array.isArray(t.reviews)?t.reviews:[]}; APP={name:t.appName||APP.name,tagline:t.tagline||""}; BROKER={name:t.brokerName||"",phone:t.phone||"",office:t.office||""}; }
+const FONT_LINK = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">';
+const SHELL = `<header class="top"><div class="wrap">
+  <a class="logo" href="#home" aria-label="الرئيسية"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></span><div><b id="brandName"></b><span id="brandSub"></span></div></a>
+  <nav class="nav" id="nav"></nav><button class="menu-btn" id="menuBtn" type="button" aria-label="القايمة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></header>
+<aside class="side" id="side" aria-label="القايمة الجانبية"></aside><div class="scrim" id="scrim" hidden></div>
+<main id="app"></main><nav class="bottom" id="bottomNav"></nav><div id="cmpBar"></div><div id="toast" class="toast" hidden></div>`;
+document.getElementById("root").innerHTML = SHELL;
+
+/* ========= بيانات ثابتة ========= */
+const TYPES = ["شقة","دوبلكس","بنتهاوس","فيلا","تاون هاوس","توين هاوس","شاليه","استوديو","محل تجاري","مكتب إداري","أرض"];
+const FINISH = ["سوبر لوكس","تشطيب كامل","نص تشطيب","على الطوب","فرش كامل"];
+const FEATURES = ["أسانسير","جراج","أمن 24 ساعة","حمام سباحة","جنينة خاصة","بلكونة","تكييفات","مطبخ مجهز","فيو مفتوح","قريب من الخدمات","كمبوند","غاز طبيعي","عداد كهربا","نادي"];
+const AREAS = {
+  "التجمع الخامس":{x:720,y:420,city:"القاهرة الجديدة"},
+  "الشيخ زايد":{x:170,y:300,city:"الجيزة"},
+  "6 أكتوبر":{x:210,y:430,city:"الجيزة"},
+  "العاصمة الإدارية":{x:930,y:500,city:"العاصمة الإدارية"},
+  "مدينتي":{x:870,y:380,city:"القاهرة الجديدة"},
+  "الرحاب":{x:790,y:330,city:"القاهرة الجديدة"},
+  "الشروق":{x:850,y:235,city:"القاهرة الجديدة"},
+  "المعادي":{x:520,y:470,city:"القاهرة"},
+  "مدينة نصر":{x:640,y:300,city:"القاهرة"},
+  "مصر الجديدة":{x:610,y:200,city:"القاهرة"},
+  "الزمالك":{x:470,y:290,city:"القاهرة"},
+  "المهندسين":{x:420,y:320,city:"الجيزة"},
+  "الساحل الشمالي":{x:null,y:null,city:"الساحل"},
+  "العين السخنة":{x:null,y:null,city:"البحر الأحمر"}
+};
+const STAGES = [
+  {k:"new",t:"جديد"},{k:"contacted",t:"اتكلمنا"},{k:"viewing",t:"معاينة"},
+  {k:"negotiation",t:"تفاوض"},{k:"won",t:"اتقفلت ✓"},{k:"lost",t:"ملغية"}
+];
+const DEAL_STAGES = ["حجز","عقد","تسليم","اتقفلت"];
+const SOURCES = ["فيسبوك","واتساب","التطبيق","OLX","معرفة شخصية","مكالمة"];
+
+/* ========= أدوات ========= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => Math.round(Number(n)||0).toLocaleString("en-US");
+function money(n){ n=Number(n)||0;
+  if(n>=1e6){ const v=n/1e6; return `<span class="num">${v%1===0?v:v.toFixed(v<10?2:1).replace(/\.?0+$/,"")}</span> مليون`; }
+  if(n>=1e3 && n%1000===0 && n>=100000){ return `<span class="num">${fmt(n/1000)}</span> ألف`; }
+  return `<span class="num">${fmt(n)}</span>`;
+}
+const today = () => new Date().toISOString().slice(0,10);
+const addDays = d => { const t=new Date(); t.setDate(t.getDate()+d); return t.toISOString().slice(0,10); };
+const daysAgo = iso => Math.round((new Date(today()) - new Date(iso))/864e5);
+const ago = iso => { const d=daysAgo(iso); return d<=0?"النهارده":d===1?"امبارح":d<7?`من ${d} أيام`:d<30?`من ${Math.round(d/7)} أسبوع`:`من ${Math.round(d/30)} شهر`; };
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function toast(m){ const t=$("#toast"); t.textContent=m; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true,2200); }
+function copy(text){ try{ navigator.clipboard.writeText(text).then(()=>toast("اتنسخ ✓"),()=>toast(text)); }catch(e){ toast(text); } }
+const waLink = (phone,msg) => "https://wa.me/2"+String(phone).replace(/\D/g,"")+"?text="+encodeURIComponent(msg);
+
+const IC = {
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  bed:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18V7M21 18v-5a3 3 0 0 0-3-3H10v6"/><path d="M3 14h18"/><circle cx="6.5" cy="11" r="1.5"/></svg>',
+  bath:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M6 12V6a2 2 0 0 1 4 0"/></svg>',
+  size:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h5V4M20 15h-5v5"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-opacity=".22" stroke="none" d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg>',
+  heartOld:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+  heartF:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-opacity=".22" stroke="none" d="M5 10.5 12 5l7 5.5V20H5z"/><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-5a2 2 0 0 1 4 0v5"/><path d="M16 6.5V4h2v4"/></svg>',
+  homeOld:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/></svg>',
+  list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-opacity=".22" stroke="none" d="M4 21V9l6-3v15zM14 21V11h6v10z"/><path d="M4 21V9l6-3v15M14 21V11h6v10M2 21h20"/><path d="M7 11v.01M7 14v.01M7 17v.01M17 14v.01M17 17v.01"/></svg>',
+  listOld:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="7" height="7" rx="1"/><rect x="14" y="4" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+  map:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-opacity=".22" stroke="none" d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"/><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20zM9 4v13.5M15 6.5V20"/></svg>',
+  mapOld:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>',
+  dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect fill="currentColor" fill-opacity=".22" stroke="none" x="3" y="3" width="18" height="18" rx="4"/><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 16v-4M12 16V8M16 16v-6"/></svg>',
+  dashOld:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
+  wa:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l2 .9c.3.2.5.2.6.4.1.1.1.7-.1 1.3z"/></svg>',
+  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 5 5 9-10"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle fill="currentColor" fill-opacity=".22" stroke="none" cx="12" cy="9" r="4.5"/><circle cx="12" cy="9" r="4.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>',
+  userOld:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+  share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>'
+};
+
+const ICN = {
+  house:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-opacity=".22" stroke="none" d="M5 10.5 12 5l7 5.5V20H5z"/><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-5a2 2 0 0 1 4 0v5"/><path d="M16 6.5V4h2v4"/></svg>',
+  city:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-opacity=".22" stroke="none" d="M4 21V9l6-3v15zM14 21V11h6v10z"/><path d="M4 21V9l6-3v15M14 21V11h6v10M2 21h20"/><path d="M7 11v.01M7 14v.01M7 17v.01M17 14v.01M17 17v.01"/></svg>',
+  mappin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-opacity=".22" stroke="none" d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"/><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20zM9 4v13.5M15 6.5V20"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-opacity=".22" stroke="none" d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg>',
+  badge:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle fill="currentColor" fill-opacity=".22" stroke="none" cx="12" cy="9" r="4.5"/><circle cx="12" cy="9" r="4.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect fill="currentColor" fill-opacity=".22" stroke="none" x="3" y="3" width="18" height="18" rx="4"/><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 16v-4M12 16V8M16 16v-6"/></svg>',
+  people:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle fill="currentColor" fill-opacity=".22" stroke="none" cx="9" cy="8.5" r="3.5"/><circle cx="9" cy="8.5" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 5.5a3 3 0 0 1 0 6M18 14.5a5 5 0 0 1 3 5.5"/></svg>',
+  calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect fill="currentColor" fill-opacity=".22" stroke="none" x="3.5" y="5" width="17" height="15.5" rx="3"/><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/></svg>',
+  coins:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse fill="currentColor" fill-opacity=".22" stroke="none" cx="9" cy="7" rx="6" ry="3"/><ellipse cx="9" cy="7" rx="6" ry="3"/><path d="M3 7v4c0 1.7 2.7 3 6 3s6-1.3 6-3V7"/><path d="M9 14v3c0 1.7 2.7 3 6 3s6-1.3 6-3v-4c0-1.6-2.4-2.9-5.5-3"/></svg>',
+  key:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle fill="currentColor" fill-opacity=".22" stroke="none" cx="8" cy="15" r="4.5"/><circle cx="8" cy="15" r="4.5"/><path d="m11.2 11.8 8.3-8.3M16 7l2.5 2.5M14 9l2 2"/></svg>',
+  hand:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-opacity=".22" stroke="none" d="M3 11.5 7 8l4 1.5 3-2.5 4 1 3 3.5-6.5 6.5L12 19l-3.5-3z"/><path d="M3 11.5 7 8l4 1.5M21 11.5 18 8l-4-1-5.5 4.5a1.5 1.5 0 0 0 2 2.2L13 12l5 5M14.5 18.5 12 16M11.5 20 9.5 18"/></svg>',
+  report:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-opacity=".22" stroke="none" d="M6 3h8l4 4v14H6z"/><path d="M6 3h8l4 4v14H6zM14 3v4h4"/><path d="M9 17v-3M12 17v-5M15 17v-2"/></svg>',
+  gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle fill="currentColor" fill-opacity=".22" stroke="none" cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>',
+  scale:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-opacity=".22" stroke="none" d="M3 14h6l-3-6zM15 14h6l-3-6z"/><path d="M12 3v18M7 21h10M4 7h16M6 8l-3 6h6zM18 8l-3 6h6z"/></svg>'
+};
+/* ========= رسومات العقارات (بدل الصور لحد ما ترفع صور حقيقية) ========= */
+const PALS = [["#7FB7A6","#0F5C4D","#E9D3A6"],["#A9C6E0","#2D4F73","#F0D9B5"],["#E8C9A0","#7A4B26","#F6E7CF"],["#B9D7C9","#285E50","#F3E2C0"],["#C9C2E6","#4A3F7A","#EEE1C4"],["#F2C6A6","#9A4D2C","#FBEAD6"]];
+function art(l,variant=0){
+  const n=[...String(l.id)].reduce((a,c)=>a+c.charCodeAt(0),0);
+  const [sky,main,warm]=PALS[(n+variant)%PALS.length];
+  const t=l.type;
+  let b="";
+  if(variant===2){ // مخطط الدور
+    return `<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="200" fill="#F4F1EA"/><g fill="none" stroke="#2B3A37" stroke-width="3"><rect x="40" y="30" width="240" height="140"/><path d="M150 30v80M150 130v40M40 100h70M200 30v60M200 110v60M200 100h80"/></g><g font-family="sans-serif" font-size="11" fill="#5A6B67" text-anchor="middle"><text x="95" y="65">ريسيبشن</text><text x="175" y="70">مطبخ</text><text x="240" y="65">نوم 1</text><text x="240" y="140">نوم 2</text><text x="95" y="140">صالة</text><text x="175" y="150">حمام</text></g><text x="160" y="192" font-family="sans-serif" font-size="10" fill="#8A9895" text-anchor="middle">${esc(l.size)} م² — مخطط توضيحي</text></svg>`;
+  }
+  if(variant===1){ // من جوه
+    return `<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="200" fill="${warm}"/><rect y="140" width="320" height="60" fill="${main}" opacity=".35"/><rect x="200" y="30" width="90" height="90" fill="${sky}" stroke="#fff" stroke-width="6"/><path d="M245 30v90M200 75h90" stroke="#fff" stroke-width="4"/><rect x="30" y="105" width="130" height="40" rx="8" fill="${main}"/><rect x="30" y="90" width="30" height="30" rx="6" fill="${main}" opacity=".8"/><rect x="130" y="90" width="30" height="30" rx="6" fill="${main}" opacity=".8"/><rect x="70" y="150" width="60" height="6" rx="3" fill="#2B3A37" opacity=".5"/><circle cx="185" cy="135" r="12" fill="#3F7F5F"/><rect x="181" y="135" width="8" height="20" fill="#7A4B26"/></svg>`;
+  }
+  if(["فيلا","تاون هاوس","توين هاوس"].includes(t)){
+    b=`<rect x="70" y="95" width="180" height="80" fill="${warm}"/><path d="M55 100 160 45l105 55z" fill="${main}"/><rect x="95" y="115" width="30" height="28" fill="${sky}"/><rect x="195" y="115" width="30" height="28" fill="${sky}"/><rect x="145" y="130" width="30" height="45" fill="${main}"/>${t!=="فيلا"?`<path d="M160 45v130" stroke="${main}" stroke-width="3"/>`:""}<circle cx="40" cy="160" r="18" fill="#3F7F5F"/><circle cx="285" cy="158" r="20" fill="#3F7F5F"/>`;
+  } else if(t==="شاليه"){
+    b=`<rect y="150" width="320" height="50" fill="#E9D3A6"/><path d="M0 150q40-10 80 0t80 0 80 0 80 0v-10H0z" fill="#3B8FB0" opacity=".7"/><rect x="90" y="90" width="140" height="60" fill="#fff"/><rect x="80" y="82" width="160" height="10" fill="${main}"/><rect x="110" y="105" width="30" height="30" fill="${sky}"/><rect x="180" y="105" width="30" height="30" fill="${sky}"/><circle cx="270" cy="45" r="18" fill="#F2C14E"/>`;
+  } else if(t==="أرض"){
+    b=`<rect y="120" width="320" height="80" fill="#D9C08A"/><path d="M40 130h240l20 55H20z" fill="none" stroke="${main}" stroke-width="3" stroke-dasharray="8 6"/><rect x="150" y="100" width="4" height="40" fill="#5A3A05"/><path d="M154 100h30l-8 8 8 8h-30z" fill="${main}"/>`;
+  } else if(t==="محل تجاري"||t==="مكتب إداري"){
+    b=`<rect x="60" y="40" width="200" height="135" fill="${main}"/>${[0,1,2,3,4,5].map(i=>`<rect x="${75+i*31}" y="55" width="22" height="80" fill="${sky}" opacity=".9"/>`).join("")}<rect x="60" y="140" width="200" height="35" fill="${warm}"/><rect x="140" y="148" width="40" height="27" fill="${sky}"/>`;
+  } else {
+    const floors = t==="بنتهاوس"?7:t==="دوبلكس"?4:5+(n%3);
+    const h=floors*18;
+    b=`<rect x="95" y="${175-h}" width="130" height="${h}" fill="${warm}"/><rect x="225" y="${195-h}" width="50" height="${h-20}" fill="${main}" opacity=".55"/><rect x="45" y="${185-h}" width="50" height="${h-10}" fill="${main}" opacity=".4"/>`+
+      Array.from({length:floors}).map((_,f)=>[0,1,2].map(c=>`<rect x="${108+c*40}" y="${181-h+f*18}" width="24" height="10" fill="${(f===0&&t==="بنتهاوس")||(f<2&&t==="دوبلكس")?main:sky}"/>`).join("")).join("");
+  }
+  return `<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g${l.id}${variant}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky}"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><rect width="320" height="200" fill="url(#g${l.id}${variant})"/><rect y="175" width="320" height="25" fill="#9AB59F"/>${b}</svg>`;
+}
+function photo(l,i=0){
+  if(l.images && l.images.length) return `<img src="${l.images[i % l.images.length]}" alt="${esc(l.title)}">`;
+  return art(l,i);
+}
+function photoCount(l){ return l.images && l.images.length ? l.images.length : 3; }
+
+/* ========= البيانات (بتتحفظ على جهازك) ========= */
+const KEY="maskan_app_v1";
+function seed(){
+  const L=(id,title,purpose,type,area,compound,price,size,beds,baths,floor,finishing,payment,down,years,features,featured,verified,days,views,owner,ownerPhone,comm,desc,status="active")=>
+    ({id,title,purpose,type,area,compound,price,size,beds,baths,floor,finishing,payment,down,years,features,featured,verified,date:addDays(-days),views,owner,ownerPhone,commission:comm,desc,status,images:[]});
+  const listings=[
+    L("a1","شقة 3 غرف فيو لاندسكيب في كمبوند","sale","شقة","التجمع الخامس","ميفيدا",8500000,165,3,2,"الثالث","سوبر لوكس","installment",15,7,["أسانسير","جراج","أمن 24 ساعة","حمام سباحة","كمبوند","فيو مفتوح"],true,true,2,412,"أ. هشام","01001112233",2.5,"شقة ريسيل استلام فوري، فيو لاندسكيب مفتوح، قريبة من البوابة والكلوب هاوس. المتبقي أقساط على 7 سنين."),
+    L("a2","فيلا مستقلة 5 غرف بجنينة وبيسين","sale","فيلا","الشيخ زايد","بيفرلي هيلز",32000000,420,5,5,"أرضي + أول","سوبر لوكس","cash",100,0,["جنينة خاصة","حمام سباحة","جراج","أمن 24 ساعة","كمبوند","غاز طبيعي"],true,true,5,890,"م. سامح","01112223344",2,"فيلا كورنر على مساحة أرض 600 متر، تشطيب ألترا، بيسين خاص وجنينة كبيرة."),
+    L("a3","شقة للإيجار مفروشة بالكامل قريبة من الجامعة الأمريكية","rent","شقة","التجمع الخامس","",35000,140,2,2,"الخامس","فرش كامل","cash",0,0,["أسانسير","تكييفات","مطبخ مجهز","قريب من الخدمات"],false,true,1,156,"مدام نادية","01223334455",50,"إيجار شهري، فرش فندقي جديد، تكييفات في كل الأوض. التأمين شهر والعمولة نص شهر."),
+    L("a4","دوبلكس بروف 200 متر في العاصمة","sale","دوبلكس","العاصمة الإدارية","R7",6900000,250,4,3,"السادس والسابع","نص تشطيب","installment",10,8,["أسانسير","بلكونة","كمبوند","فيو مفتوح"],true,false,3,334,"أ. كريم","01098887766",2.5,"دوبلكس بروف 200م تراس، مقدم 10% وأقساط على 8 سنين بدون فوايد. استلام 2027."),
+    L("a5","تاون هاوس ميدل في مدينتي","sale","تاون هاوس","مدينتي","B10",14500000,280,4,4,"3 أدوار","تشطيب كامل","installment",30,5,["جنينة خاصة","جراج","أمن 24 ساعة","نادي","كمبوند"],false,true,9,267,"أ. طارق","01155566677",2,"تاون هاوس ميدل تشطيب كامل، قريب من المول والنادي، جنينة 120 متر."),
+    L("a6","شاليه أول صف بحر في الساحل","sale","شاليه","الساحل الشمالي","مراسي",11000000,120,2,2,"أرضي بجاردن","سوبر لوكس","installment",20,6,["حمام سباحة","فيو مفتوح","جنينة خاصة","تكييفات"],true,true,4,710,"م. يوسف","01277788899",2.5,"شاليه أول صف على البحر مباشرة، جاردن 60م، تشطيب فندقي."),
+    L("a7","شقة 180 متر في مصر الجديدة قريب من الكوربة","sale","شقة","مصر الجديدة","",5200000,180,3,2,"الرابع","تشطيب كامل","cash",100,0,["أسانسير","بلكونة","قريب من الخدمات","غاز طبيعي","عداد كهربا"],false,false,12,198,"أ. عادل","01009998877",2.5,"شقة على شارع رئيسي، 3 أوض وريسيبشن 3 قطع، عمارة حديثة."),
+    L("a8","محل تجاري على شارع رئيسي في مدينة نصر","rent","محل تجاري","مدينة نصر","",60000,90,0,1,"أرضي","تشطيب كامل","cash",0,0,["قريب من الخدمات","عداد كهربا"],false,true,6,143,"الحاج محمود","01144455566",50,"محل واجهة 8 متر على عباس العقاد، يصلح لأي نشاط."),
+    L("a9","بنتهاوس بروف تراس على النيل","sale","بنتهاوس","المعادي","",18500000,300,4,3,"الأخير","سوبر لوكس","cash",100,0,["أسانسير","فيو مفتوح","جراج","تكييفات","بلكونة"],true,true,7,955,"د. منى","01066677788",2,"بنتهاوس فيو نيل مباشر، تراس 120 متر، تشطيب مودرن."),
+    L("a10","استوديو للإيجار في الزمالك","rent","استوديو","الزمالك","",22000,60,1,1,"الثاني","فرش كامل","cash",0,0,["تكييفات","مطبخ مجهز","قريب من الخدمات"],false,false,3,88,"مستر جون","01211122233",50,"استوديو هادي مفروش، مناسب للأجانب والطلبة."),
+    L("a11","توين هاوس في 6 أكتوبر بالتقسيط","sale","توين هاوس","6 أكتوبر","بالم هيلز",16000000,310,4,4,"3 أدوار","نص تشطيب","installment",10,9,["جنينة خاصة","كمبوند","أمن 24 ساعة","نادي"],false,true,14,231,"أ. وليد","01188899900",2,"توين هاوس مقدم 10% وتقسيط 9 سنين، قريب من الكلوب هاوس."),
+    L("a12","مكتب إداري في داون تاون","sale","مكتب إداري","العاصمة الإدارية","داون تاون",4300000,75,0,1,"العاشر","تشطيب كامل","installment",15,6,["أسانسير","أمن 24 ساعة","جراج","تكييفات"],false,false,20,120,"شركة الأمل","01022233344",3,"مكتب إداري تشطيب كامل بالتكييفات، عائد إيجاري متوقع 8%."),
+    L("a13","شقة 130 متر في الرحاب المرحلة الخامسة","sale","شقة","الرحاب","",4800000,130,3,2,"الأول","تشطيب كامل","cash",100,0,["جنينة خاصة","أمن 24 ساعة","نادي","قريب من الخدمات","غاز طبيعي"],false,true,8,175,"أ. سعيد","01133344455",2.5,"شقة دور أول بحري، قريبة من السوق والمسجد."),
+    L("a14","شاليه في العين السخنة بفيو بحر","rent","شاليه","العين السخنة","لا فيستا",9000,100,2,1,"أول","فرش كامل","cash",0,0,["حمام سباحة","فيو مفتوح","تكييفات"],false,false,2,64,"أ. ماجد","01244455566",10,"إيجار باليوم في الويك إند (9 آلاف لليلة)، بيسين وفيو بحر."),
+    L("a15","أرض 400 متر للبناء في الشروق","sale","أرض","الشروق","",7500000,400,0,0,"—","على الطوب","cash",100,0,["قريب من الخدمات"],false,false,25,92,"أ. فتحي","01055566677",2.5,"أرض سكني 400م ناصية، مرخصة أرضي + 2 + روف."),
+    L("a16","شقة 3 غرف في الشيخ زايد بالتقسيط","sale","شقة","الشيخ زايد","زايد ديونز",7200000,155,3,3,"الثاني","على الطوب","installment",5,10,["كمبوند","أمن 24 ساعة","نادي","بلكونة"],true,false,1,302,"أ. حازم","01166677788",2.5,"أقل مقدم في زايد 5% وأقساط على 10 سنين. استلام 2028."),
+    L("a17","شقة للإيجار في المهندسين قريب من شهاب","rent","شقة","المهندسين","",28000,170,3,2,"السابع","تشطيب كامل","cash",0,0,["أسانسير","تكييفات","بلكونة","غاز طبيعي"],false,true,4,121,"أ. رامي","01077788899",50,"شقة قانون جديد، 3 أوض، بلكونة على شارع هادي."),
+    L("a18","فيلا توين في التجمع اتباعت","sale","توين هاوس","التجمع الخامس","ليك فيو",21000000,330,4,4,"3 أدوار","سوبر لوكس","cash",100,0,["جنينة خاصة","كمبوند","حمام سباحة"],false,true,40,520,"أ. شريف","01199900011",2,"اتباعت عن طريق المكتب.","sold")
+  ];
+  const leads=[
+    {id:"c1",name:"أحمد مصطفى",phone:"01011223344",source:"فيسبوك",stage:"new",need:{purpose:"sale",type:"شقة",area:"التجمع الخامس",max:9000000,beds:3},listingId:"a1",notes:"عاوز استلام فوري، معاه كاش 3 مليون والباقي تقسيط",next:today(),created:addDays(0)},
+    {id:"c2",name:"سارة عبد الله",phone:"01122334455",source:"واتساب",stage:"contacted",need:{purpose:"rent",type:"شقة",area:"التجمع الخامس",max:40000,beds:2},listingId:"a3",notes:"شغالة في البنك، محتاجة مفروش قبل أول الشهر",next:addDays(-1),created:addDays(-3)},
+    {id:"c3",name:"م. خالد رشدي",phone:"01233445566",source:"معرفة شخصية",stage:"viewing",need:{purpose:"sale",type:"فيلا",area:"الشيخ زايد",max:35000000,beds:4},listingId:"a2",notes:"معاينة الفيلا يوم الخميس الساعة 5",next:addDays(2),created:addDays(-6)},
+    {id:"c4",name:"منى فؤاد",phone:"01044556677",source:"التطبيق",stage:"negotiation",need:{purpose:"sale",type:"شاليه",area:"الساحل الشمالي",max:12000000,beds:2},listingId:"a6",notes:"عرضت 10.5 مليون، المالك عاوز 11",next:today(),created:addDays(-10)},
+    {id:"c5",name:"عمرو حسن",phone:"01155667788",source:"OLX",stage:"new",need:{purpose:"sale",type:"",area:"العاصمة الإدارية",max:7000000,beds:3},listingId:"",notes:"مستثمر، عاوز أقل مقدم",next:addDays(1),created:addDays(-1)},
+    {id:"c6",name:"ياسمين علي",phone:"01266778899",source:"مكالمة",stage:"contacted",need:{purpose:"rent",type:"استوديو",area:"",max:25000,beds:1},listingId:"",notes:"",next:addDays(3),created:addDays(-2)},
+    {id:"c7",name:"شريف كمال",phone:"01077889900",source:"فيسبوك",stage:"won",need:{purpose:"sale",type:"توين هاوس",area:"التجمع الخامس",max:22000000,beds:4},listingId:"a18",notes:"اتقفلت ✓",next:"",created:addDays(-45)},
+    {id:"c8",name:"هبة سمير",phone:"01188990011",source:"واتساب",stage:"lost",need:{purpose:"sale",type:"شقة",area:"المعادي",max:4000000,beds:2},listingId:"",notes:"الميزانية مش مناسبة حالياً",next:"",created:addDays(-20)}
+  ];
+  const m = k => { const d=new Date(); d.setMonth(d.getMonth()-k); return d.toISOString().slice(0,10); };
+  const deals=[
+    {id:"d1",title:"توين هاوس ليك فيو - التجمع",client:"شريف كمال",price:21000000,pct:2,split:0,status:"received",date:m(1)},
+    {id:"d2",title:"شقة إيجار - مدينة نصر",client:"أ. نبيل",price:18000,pct:50,split:0,status:"received",date:m(2)},
+    {id:"d3",title:"شقة 150م - الرحاب",client:"محمود إبراهيم",price:4200000,pct:2.5,split:50,status:"received",date:m(3)},
+    {id:"d4",title:"شاليه مراسي - الساحل",client:"منى فؤاد",price:10800000,pct:2.5,split:0,status:"expected",date:today()},
+    {id:"d5",title:"فيلا زايد",client:"م. خالد رشدي",price:31000000,pct:2,split:0,status:"expected",date:addDays(10)},
+    {id:"d6",title:"محل - المعادي",client:"الحاج سيد",price:2500000,pct:2.5,split:0,status:"received",date:m(4)},
+    {id:"d7",title:"شقة 3 غرف - مدينتي",client:"رانيا مجدي",price:5600000,pct:2.5,split:0,status:"received",date:m(0)}
+  ];
+  listings.forEach(l=>{l.delivery=["a4","a11","a12","a16"].includes(l.id)?"offplan":"ready";l.demo=true;});
+  leads.forEach(x=>x.demo=true);
+  deals.forEach(x=>x.demo=true);
+  return {listings,leads,deals};
+}
+const LKEY="maskan_local_v2", DKEY="maskan_demo_v2";
+const stripPriv = l => { const {owner,ownerPhone,commission,views,...pub}=l; return pub; };
+const ownersOf = ls => { const o={}; ls.forEach(l=>o[l.id]={owner:l.owner||"",ownerPhone:l.ownerPhone||"",commission:l.commission||0,demo:true}); return o; };
+const localPrefs = (()=>{ try{ return JSON.parse(localStorage.getItem(LKEY))||{}; }catch(e){ return {}; } })();
+let S = {listings:[],leads:[],deals:[],owners:{},favs:localPrefs.favs||[],compare:localPrefs.compare||[]};
+if(DEMO){
+  let d=null; try{ d=JSON.parse(localStorage.getItem(DKEY)); }catch(e){}
+  if(!d){ const s=seed(); d={listings:SITE&&SITE.listings?SITE.listings:s.listings.map(stripPriv),owners:ownersOf(s.listings),leads:s.leads,deals:s.deals}; }
+  Object.assign(S,d);
+} else if(SITE && Array.isArray(SITE.listings)) S.listings=SITE.listings;
+function save(){ try{ localStorage.setItem(LKEY, JSON.stringify({favs:S.favs,compare:S.compare})); if(DEMO) localStorage.setItem(DKEY, JSON.stringify({listings:S.listings,owners:S.owners,leads:S.leads,deals:S.deals})); }catch(e){} }
+const priv = id => S.owners[id] || {};
+
+/* ========= وضع السمسار + الحفظ أونلاين ========= */
+let BROKER_MODE = DEMO, db = null, ASSETS = null, ART = null;
+function dbErr(e){ toast(e&&e.code==="permission_denied"?"مش مسموح لك تعدل هنا":"حصلت مشكلة في الحفظ، جرب تاني"); }
+const CRM = {
+  async put(coll,id,obj){ obj={...obj}; delete obj.id;
+    if(db){ try{ await db.doc(`crm/main/${coll}/${id}`).set(obj); }catch(e){ dbErr(e); } return; }
+    if(coll==="owners") S.owners[id]=obj; else { const i=S[coll].findIndex(x=>x.id===id); const o={id,...obj}; i>=0?S[coll][i]=o:S[coll].unshift(o); }
+    save(); render(true); if(SUPA) await sbUpsert(coll,id,obj); },
+  async patch(coll,id,p){
+    if(db){ try{ await db.doc(`crm/main/${coll}/${id}`).update(p); }catch(e){ dbErr(e); } return; }
+    const o=coll==="owners"?S.owners[id]:S[coll].find(x=>x.id===id); if(o) Object.assign(o,p); save(); render(true);
+    if(SUPA&&o){ const {id:_,...data}=o; await sbUpsert(coll,id,data); } },
+  async del(coll,id){
+    if(db){ try{ await db.doc(`crm/main/${coll}/${id}`).delete(); }catch(e){ dbErr(e); } return; }
+    if(coll==="owners") delete S.owners[id]; else S[coll]=S[coll].filter(x=>x.id!==id); save(); render(true);
+    if(SUPA){ const {error}=await sb.from("maskan_"+coll).delete().eq("id",id); if(error) dbErr(error); } }
+};
+async function sbUpsert(coll,id,data){ const {error}=await sb.from("maskan_"+coll).upsert({id,data}); if(error){ console.warn(error); dbErr(error); } }
+let sbListingIds=new Set();
+async function sbLoadPublic(){
+  const [st,ls]=await Promise.all([sb.from("maskan_settings").select("data").eq("id",1).maybeSingle(), sb.from("maskan_listings").select("id,data")]);
+  if(st.data&&st.data.data){ const t=st.data.data; APP={name:t.appName||APP.name,tagline:t.tagline||""}; BROKER={name:t.brokerName||"",phone:t.phone||"",office:t.office||""}; EXTRA={bio:t.bio||"",reviews:Array.isArray(t.reviews)?t.reviews:[]}; }
+  if(ls.data){ S.listings=ls.data.map(r=>({...r.data,id:r.id})).sort((a,b)=>String(b.date).localeCompare(String(a.date))); sbListingIds=new Set(ls.data.map(r=>r.id)); }
+  document.title=APP.name+" "+APP.tagline;
+}
+async function sbLoadPrivate(){
+  const [a,b,c]=await Promise.all(["leads","deals","owners"].map(t=>sb.from("maskan_"+t).select("id,data")));
+  S.leads=(a.data||[]).map(r=>({id:r.id,...r.data})).sort((x,y)=>String(y.created||"").localeCompare(String(x.created||"")));
+  S.deals=(b.data||[]).map(r=>({id:r.id,...r.data}));
+  const o={}; (c.data||[]).forEach(r=>o[r.id]=r.data); S.owners=o;
+}
+async function sbSeedIfEmpty(){
+  if(S.listings.length||S.leads.length) return;
+  const s=seed();
+  await sb.from("maskan_listings").upsert(s.listings.map(l=>({id:l.id,data:stripPriv(l)})));
+  const ow=ownersOf(s.listings); await sb.from("maskan_owners").upsert(Object.keys(ow).map(k=>({id:k,data:ow[k]})));
+  await sb.from("maskan_leads").upsert(s.leads.map(({id,...d})=>({id,data:d})));
+  await sb.from("maskan_deals").upsert(s.deals.map(({id,...d})=>({id,data:d})));
+  await sbLoadPublic(); await sbLoadPrivate();
+}
+async function sbAfterLogin(){
+  const {data,error}=await sb.rpc("maskan_claim");
+  if(error||!data){ BROKER_MODE=false; toast("الحساب ده مش حساب السمسار"); render(true); return; }
+  BROKER_MODE=true; await sbLoadPrivate(); await sbSeedIfEmpty(); render(true);
+}
+async function sbLogin(email,pass,isNew){
+  const r=isNew? await sb.auth.signUp({email,password:pass}) : await sb.auth.signInWithPassword({email,password:pass});
+  if(r.error){ toast(/Invalid login/i.test(r.error.message)?"الإيميل أو الباسورد غلط":/registered/i.test(r.error.message)?"الإيميل ده عنده حساب، اعمل دخول":/Password/i.test(r.error.message)?"الباسورد لازم 6 حروف على الأقل":"حصلت مشكلة: "+r.error.message); return false; }
+  if(!r.data.session){ toast("ابعتنالك رسالة تأكيد على الإيميل، افتحها وبعدين اعمل دخول"); return false; }
+  await sbAfterLogin(); if(BROKER_MODE){ toast("أهلاً يا "+BROKER.name+" ✓"); location.hash="dashboard"; } return true;
+}
+async function sbLogout(){ await sb.auth.signOut(); BROKER_MODE=false; S.leads=[];S.deals=[];S.owners={}; location.hash="home"; render(true); toast("اتعمل خروج"); }
+const RESET_CSS = ":root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}";
+function buildPage(){
+  const st=document.head && document.head.querySelector("style"); const reset=(st&&st.textContent.trim())||RESET_CSS;
+  const data=JSON.stringify({settings:{appName:APP.name,tagline:APP.tagline,brokerName:BROKER.name,phone:BROKER.phone,office:BROKER.office,bio:EXTRA.bio,reviews:EXTRA.reviews},listings:S.listings}).replace(/</g,"\\u003c");
+  return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>'+reset+'</style></head><body>'
+    +'<title>'+esc(APP.name+" "+APP.tagline)+'</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n'+FONT_LINK+'\n<style id="appStyle">'+document.getElementById("appStyle").textContent+'</style>\n<div id="root"></div>\n'
+    +'<script type="application/json" id="siteData">'+data+'<\/script>\n<script id="main">'+document.getElementById("main").textContent+'<\/script></body></html>';
+}
+async function publishSite(msg, goHash){
+  if(DEMO){ save(); toast(msg||"اتحفظ ✓"); if(goHash&&location.hash!=="#"+goHash) location.hash=goHash; else render(true); return true; }
+  if(SUPA){ toast("بيتحفظ…");
+    const settings={appName:APP.name,tagline:APP.tagline,brokerName:BROKER.name,phone:BROKER.phone,office:BROKER.office,bio:EXTRA.bio,reviews:EXTRA.reviews};
+    const r1=await sb.from("maskan_settings").upsert({id:1,data:settings});
+    const r2=S.listings.length? await sb.from("maskan_listings").upsert(S.listings.map(l=>({id:l.id,data:l}))) : {error:null};
+    const gone=[...sbListingIds].filter(id=>!S.listings.some(l=>l.id===id));
+    const r3=gone.length? await sb.from("maskan_listings").delete().in("id",gone) : {error:null};
+    if(r1.error||r2.error||r3.error){ dbErr(r1.error||r2.error||r3.error); return false; }
+    sbListingIds=new Set(S.listings.map(l=>l.id)); document.title=APP.name+" "+APP.tagline;
+    toast(msg||"اتحفظ ✓"); if(goHash&&location.hash!=="#"+goHash) location.hash=goHash; else render(true); return true; }
+  if(!ART){ toast("الحفظ مش متاح من هنا، افتح البرنامج من حسابك"); return false; }
+  try{ sessionStorage.setItem("maskan_after", JSON.stringify({msg:msg||"اتحفظ ✓", go:goHash||location.hash.slice(1)})); }catch(e){}
+  toast("بيتحفظ…");
+  try{ await ART.publish(buildPage()); return true; }
+  catch(e){ const c=e&&e.code;
+    if(c==="conflict") return false;
+    toast(c==="not_writer"||c==="not_granted"?"مش مسموح لك تعدل البرنامج":c==="too_large"?"الصفحة كبرت أوي، قلل الصور":c==="rate_limited"?"استنى ثواني وجرب تاني":"مقدرتش أحفظ، جرب تاني"); return false; }
+}
+let pendingRender=false;
+function softRender(){ const a=document.activeElement; if(a&&a.closest&&a.closest("#app form")&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)){ pendingRender=true; return; } render(true); }
+document.addEventListener("focusout",()=>setTimeout(()=>{ if(!pendingRender) return; const a=document.activeElement; if(!(a&&a.closest&&a.closest("#app form"))){ pendingRender=false; render(true); } },60));
+async function boot(){
+  try{ const a=JSON.parse(sessionStorage.getItem("maskan_after")||"null"); if(a){ sessionStorage.removeItem("maskan_after"); if(a.go&&location.hash!=="#"+a.go) location.hash=a.go; setTimeout(()=>toast(a.msg),300); } }catch(e){}
+  if(DEMO) return;
+  if(SUPA){ try{ await sbLoadPublic(); render(true); const {data}=await sb.auth.getSession(); if(data&&data.session) await sbAfterLogin(); }catch(e){ console.warn(e); toast("مش قادر أوصل للسيرفر، اتأكد من النت"); } return; }
+  try{
+    const [user,art]=await Promise.all([claude.use("user"),claude.use("artifact")]);
+    ART=art;
+    const can = user ? await user.canEdit() : false;
+    if(!can) return;
+    BROKER_MODE=true;
+    [db,ASSETS]=await Promise.all([claude.use("db"),claude.use("assets")]);
+    render(true);
+    if(!db){ toast("قاعدة البيانات مش متاحة دلوقتي"); return; }
+    const C=n=>db.collection("crm/main/"+n);
+    const err=e=>console.warn("db",e&&e.code);
+    C("leads").onSnapshot(q=>{ S.leads=q.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(b.created||"").localeCompare(String(a.created||""))); softRender(); },err);
+    C("deals").onSnapshot(q=>{ S.deals=q.docs.map(d=>({id:d.id,...d.data()})); softRender(); },err);
+    C("owners").onSnapshot(q=>{ const o={}; q.docs.forEach(d=>o[d.id]=d.data()); S.owners=o; softRender(); },err);
+  }catch(e){ console.warn(e); }
+}
+const byId = id => S.listings.find(l=>l.id===id);
+const commOf = d => d.price*d.pct/100*(1-(d.split||0)/100);
+function quality(l){
+  const miss=[]; let sc=0; const add=(ok,pts,msg)=>{ if(ok) sc+=pts; else miss.push(msg); };
+  const realImgs=(l.images||[]).length;
+  add(realImgs>=3,25,realImgs?"ضيف صور أكتر (3 على الأقل)":"ضيف صور حقيقية");
+  add((l.desc||"").length>=80,15,"اكتب وصف أطول");
+  add((l.title||"").length>=20,10,"خلي العنوان أوضح وأطول");
+  add((l.features||[]).length>=3,15,"اختار 3 مميزات على الأقل");
+  add(l.price>0&&l.size>0,10,"اكتب السعر والمساحة");
+  add(l.verified,10,"راجع الأوراق وعلّمه موثّق");
+  add(!!(l.compound||(l.floor&&l.floor!=="—")),5,"اكتب الدور أو الكمبوند");
+  add(["أرض","محل تجاري","مكتب إداري"].includes(l.type)||(l.beds>0&&l.baths>0),10,"اكتب عدد الغرف والحمامات");
+  return {score:sc,miss,level:sc>=75?"good":sc>=50?"mid":"bad"};
+}
+const qPill = q => `<span class="pill ${q.level==="good"?"p-won":q.level==="mid"?"p-viewing":"p-lost"}" title="${esc(q.miss.join("، "))}">${q.score}%</span>`;
+const code = l => String(l.id).toUpperCase().slice(-6);
+function hot(c){ if(["won","lost"].includes(c.stage)) return false; if(["viewing","negotiation"].includes(c.stage)) return true; return !!(c.listingId && c.created && daysAgo(c.created)<=2 && c.next && c.next<=addDays(1)); }
+function tpls(c){
+  const m=matches(c).slice(0,3), n=c.need||{}, l=c.listingId&&byId(c.listingId);
+  return [
+    ["ترحيب",`أهلاً يا ${c.name} 👋 معاك ${BROKER.name} من ${APP.name}. وصلني طلبك ${n.purpose==="rent"?"لإيجار":"لشراء"} ${n.type||"عقار"}${n.area?" في "+n.area:""}، وهبعتلك أنسب العروض حالاً.`],
+    ["ابعت العروض المناسبة",m.length?`يا ${c.name}، دي أنسب ${m.length} عروض لطلبك:\n`+m.map((x,i)=>`${i+1}) ${x.title} - ${x.area} - ${fmt(x.price)} ج.م (كود ${code(x)})`).join("\n")+`\nقولي أنهي واحد يعجبك ونحدد معاينة.`:`يا ${c.name}، بدوّرلك على عروض تناسب طلبك وهبعتلك أول ما ألاقي.`],
+    ["تأكيد معاينة",`يا ${c.name}، بأكد معاك ميعاد المعاينة${l?" لـ"+l.title:""}${c.next?" يوم "+c.next:""}. هستناك، ولو فيه أي تغيير قولي.`],
+    ["متابعة بعد المعاينة",`يا ${c.name}، إيه رأيك في المعاينة؟ لو محتاج تشوف حاجة تانية أو تتفاوض في السعر أنا معاك.`],
+    ["عرض سعر جديد",`يا ${c.name}، فيه أخبار حلوة: المالك${l?" بتاع "+l.title:""} ممكن ينزل في السعر. تحب نتكلم؟`]
+  ];
+}
+
+/* ========= فلاتر البحث ========= */
+const F0 = {purpose:"",type:"",area:"",minP:"",maxP:"",beds:"",finishing:"",payment:"",delivery:"",q:"",sort:"new",verified:false,feats:[]};
+let F = {...F0};
+let listMode="grid";
+function applyFilters(arr=S.listings){
+  let r=arr.filter(l=>l.status!=="sold");
+  if(F.purpose) r=r.filter(l=>l.purpose===F.purpose);
+  if(F.type) r=r.filter(l=>l.type===F.type);
+  if(F.area) r=r.filter(l=>l.area===F.area);
+  if(F.minP) r=r.filter(l=>l.price>=+F.minP);
+  if(F.maxP) r=r.filter(l=>l.price<=+F.maxP);
+  if(F.beds) r=r.filter(l=>l.beds>=+F.beds);
+  if(F.finishing) r=r.filter(l=>l.finishing===F.finishing);
+  if(F.payment) r=r.filter(l=>l.payment===F.payment);
+  if(F.verified) r=r.filter(l=>l.verified);
+  if(F.feats&&F.feats.length) r=r.filter(l=>F.feats.every(f=>(l.features||[]).includes(f)));
+  if(F.delivery) r=r.filter(l=>(l.delivery||"ready")===F.delivery);
+  if(F.q){ const q=F.q.trim(); r=r.filter(l=>(l.title+l.area+l.compound+l.type+l.desc).includes(q)); }
+  const s={new:(a,b)=>b.date.localeCompare(a.date),low:(a,b)=>a.price-b.price,high:(a,b)=>b.price-a.price,ppm:(a,b)=>a.price/a.size-b.price/b.size}[F.sort]||((a,b)=>b.date.localeCompare(a.date));
+  return r.sort((a,b)=>(b.featured-a.featured)||s(a,b));
+}
+function matches(lead){
+  const n=lead.need||{};
+  return S.listings.filter(l=>l.status==="active" && l.purpose===n.purpose && (!n.type||l.type===n.type) && (!n.area||l.area===n.area) && (!n.max||l.price<=n.max*1.1) && (!n.beds||l.beds>=n.beds));
+}
+
+/* ========= المكونات ========= */
+function card(l){
+  const fav=S.favs.includes(l.id), cmp=S.compare.includes(l.id);
+  return `<article class="card">
+    <a class="ph" href="#p-${l.id}">${photo(l)}
+      <div class="badges">${l.featured?'<span class="badge gold">مميز</span>':""}${l.verified?'<span class="badge green">موثّق ✓</span>':""}${l.payment==="installment"?'<span class="badge dark">تقسيط</span>':""}${l.delivery==="offplan"?'<span class="badge">تحت الإنشاء</span>':""}${l.status==="reserved"?'<span class="badge dark">محجوز</span>':""}</div>
+    </a>
+    <button class="fav" data-act="fav" data-id="${l.id}" aria-label="${fav?"شيل من المفضلة":"ضيف للمفضلة"}">${fav?IC.heartF:IC.heart}</button>
+    <div class="body">
+      <div class="price">${money(l.price)} <small>ج.م${l.purpose==="rent"?(l.type==="شاليه"?" / الليلة":" / شهرياً"):""}</small></div>
+      ${l.purpose==="sale"&&l.size?`<div class="small muted">سعر المتر <span class="num">${fmt(l.price/l.size)}</span> ج.م${l.payment==="installment"?` · مقدم ${l.down}%`:""}</div>`:""}
+      <h3><a href="#p-${l.id}">${esc(l.title)}</a></h3>
+      <div class="loc">${IC.pin}${esc(l.area)}${l.compound?" · "+esc(l.compound):""}</div>
+      <div class="specs">${l.beds?`<span>${IC.bed}<span class="num">${l.beds}</span> غرف</span>`:""}${l.baths?`<span>${IC.bath}<span class="num">${l.baths}</span> حمام</span>`:""}<span>${IC.size}<span class="num">${l.size}</span> م²</span></div>
+      <div class="foot"><span class="small muted">${ago(l.date)}</span><label class="cmp"><input type="checkbox" data-act="cmp" data-id="${l.id}" ${cmp?"checked":""}> قارن</label></div>
+    </div></article>`;
+}
+function opts(arr,sel,ph){ return (ph!==undefined?`<option value="">${ph}</option>`:"")+arr.map(v=>{const [val,lab]=Array.isArray(v)?v:[v,v];return `<option value="${esc(val)}" ${String(sel)===String(val)?"selected":""}>${esc(lab)}</option>`}).join(""); }
+
+/* ========= الصفحات ========= */
+function pageHome(){
+  const featured=S.listings.filter(l=>l.featured&&l.status!=="sold").slice(0,6);
+  const areaStats=Object.keys(AREAS).map(a=>{const ls=S.listings.filter(l=>l.area===a&&l.purpose==="sale"&&l.size&&l.status!=="sold");return {a,count:S.listings.filter(l=>l.area===a&&l.status!=="sold").length,ppm:ls.length?ls.reduce((s,l)=>s+l.price/l.size,0)/ls.length:0}}).filter(x=>x.count).sort((a,b)=>b.count-a.count);
+  const newLeads=S.leads.filter(l=>l.stage==="new").length;
+  const due=S.leads.filter(l=>l.next&&l.next<=today()&&!["won","lost"].includes(l.stage)).length;
+  return `
+  <section class="hero">
+    <svg class="hero-skyline" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true"><path fill="#fff" d="M0 120V80h40V50h30v30h30V30h50v50h20V60h40v20h30V20h20l10-15 10 15h20v100h30V70h60v50h20V40h40v80h30V60h20V30h60v90h40V75h40v45h30V50h50v70h20V20h10l10-20 10 20h10v100h40V65h50v55h30V45h40v75h40V80h60v40z"/></svg>
+    <div class="wrap">
+      <h1>دوّر على بيتك الجاي في دقيقة</h1>
+      <p>شقق وفلل وشاليهات ومحلات في كل مصر، بيع وإيجار وتقسيط. كل إعلان متراجع، وسعر المتر قدامك عشان تقارن صح.</p>
+      <form class="search" id="heroSearch">
+        <div class="tabs"><button type="button" class="tab ${F.purpose!=="rent"?"on":""}" data-p="sale">شراء</button><button type="button" class="tab ${F.purpose==="rent"?"on":""}" data-p="rent">إيجار</button></div>
+        <div class="search-row">
+          <input class="inp" id="hq" placeholder="اكتب منطقة أو كمبوند… مثلاً: ميفيدا" value="${esc(F.q)}">
+          <select class="inp" id="harea">${opts(Object.keys(AREAS),F.area,"كل المناطق")}</select>
+          <select class="inp" id="htype">${opts(TYPES,F.type,"كل الأنواع")}</select>
+          <button class="btn primary" type="submit">دوّر</button>
+        </div>
+      </form>
+      <div class="quick">${["التجمع الخامس","الشيخ زايد","العاصمة الإدارية","الساحل الشمالي","المعادي"].map(a=>`<a href="#listings" data-act="goArea" data-area="${a}">${a}</a>`).join("")}<a href="#listings" data-act="goInst">تقسيط بدون فوايد</a>${SUPA&&!isStandalone()?`<a href="#install" data-act="install" style="background:rgba(255,255,255,.18)">📲 ثبّت التطبيق</a>`:""}</div>
+    </div>
+  </section>
+  <section class="block wrap">
+    <div class="sec-head"><h2>عقارات مميزة</h2><a class="btn sm" href="#listings">شوف الكل (${S.listings.filter(l=>l.status!=="sold").length})</a></div>
+    <div class="cards">${featured.map(card).join("")}</div>
+  </section>
+  <section class="block wrap">
+    <div class="sec-head"><h2>تصفح حسب المنطقة</h2><span class="small muted">متوسط سعر المتر من الإعلانات الحالية</span></div>
+    <div class="areas">${areaStats.map(x=>`<a class="area" href="#listings" data-act="goArea" data-area="${esc(x.a)}"><b>${esc(x.a)}</b><span class="small muted"><span class="num">${x.count}</span> إعلان</span>${x.ppm?`<span class="small">المتر ≈ <span class="num">${fmt(Math.round(x.ppm/1000)*1000)}</span> ج.م</span>`:'<span class="small muted">إيجار</span>'}</a>`).join("")}</div>
+  </section>
+  ${BROKER_MODE?`<section class="block wrap">
+    <div class="panel" style="display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+      <div><h3 style="margin:0 0 4px">صباح الخير يا ${esc(BROKER.name)} 👋</h3><div class="muted">عندك <b class="num">${newLeads}</b> عملاء جداد و<b class="num">${due}</b> متابعات مستنياك النهارده.</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn primary" href="#dash-leads">افتح العملاء</a><a class="btn" href="#add">${IC.plus} أضف عقار</a></div>
+    </div>
+  </section>`:`<section class="block wrap"><div class="panel" style="display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap"><div><h3 style="margin:0 0 4px">مش لاقي اللي بتدور عليه؟</h3><div class="muted">قول لـ${esc(BROKER.name)} على طلبك، وهو هيدوّرلك ويبعتلك المناسب.</div></div><a class="btn wa" href="${waLink(BROKER.phone,"السلام عليكم، أنا بدور على عقار: ")}" target="_blank" rel="noopener">${IC.wa} ابعت طلبك على واتساب</a></div></section>`}`;
+}
+
+function filtersPanel(){
+  return `<aside class="filters" id="filters">
+    <div style="display:flex;justify-content:space-between;align-items:center"><h3>فلتر النتايج</h3><button class="linkbtn" data-act="clearF">امسح الكل</button></div>
+    <div class="field"><label for="fq">بحث</label><input class="inp" id="fq" data-f="q" value="${esc(F.q)}" placeholder="كمبوند، شارع، كلمة…"></div>
+    <div class="field"><label>الغرض</label><div class="seg" style="width:100%">${[["","الكل"],["sale","بيع"],["rent","إيجار"]].map(([v,t])=>`<button type="button" style="flex:1" class="${F.purpose===v?"on":""}" data-act="setF" data-k="purpose" data-v="${v}">${t}</button>`).join("")}</div></div>
+    <div class="field"><label for="ftype">نوع العقار</label><select class="inp" id="ftype" data-f="type">${opts(TYPES,F.type,"الكل")}</select></div>
+    <div class="field"><label for="farea">المنطقة</label><select class="inp" id="farea" data-f="area">${opts(Object.keys(AREAS),F.area,"كل المناطق")}</select></div>
+    <div class="field"><label>السعر (ج.م)</label><div style="display:flex;gap:8px"><input class="inp num" id="fmin" data-f="minP" type="number" inputmode="numeric" placeholder="من" value="${esc(F.minP)}"><input class="inp num" id="fmax" data-f="maxP" type="number" inputmode="numeric" placeholder="لحد" value="${esc(F.maxP)}"></div></div>
+    <div class="field"><label>عدد الغرف</label><div class="chips">${["","1","2","3","4","5"].map(v=>`<button type="button" class="chip ${F.beds===v?"on":""}" data-act="setF" data-k="beds" data-v="${v}">${v?v+"+":"أي عدد"}</button>`).join("")}</div></div>
+    <div class="field"><label for="ffin">التشطيب</label><select class="inp" id="ffin" data-f="finishing">${opts(FINISH,F.finishing,"أي تشطيب")}</select></div>
+    <div class="field"><label>طريقة الدفع</label><div class="chips">${[["","الكل"],["cash","كاش"],["installment","تقسيط"]].map(([v,t])=>`<button type="button" class="chip ${F.payment===v?"on":""}" data-act="setF" data-k="payment" data-v="${v}">${t}</button>`).join("")}</div></div>
+    <div class="field"><label>الاستلام</label><div class="chips">${[["","الكل"],["ready","استلام فوري"],["offplan","تحت الإنشاء"]].map(([v,t])=>`<button type="button" class="chip ${F.delivery===v?"on":""}" data-act="setF" data-k="delivery" data-v="${v}">${t}</button>`).join("")}</div></div>
+    <div class="field"><label>المميزات</label><div class="chips">${["أسانسير","جراج","حمام سباحة","جنينة خاصة","أمن 24 ساعة","كمبوند","تكييفات","فيو مفتوح"].map(f=>`<button type="button" class="chip ${(F.feats||[]).includes(f)?"on":""}" data-act="toggleFeat" data-v="${f}">${f}</button>`).join("")}</div></div>
+    <label class="check"><input type="checkbox" id="fver" data-f="verified" ${F.verified?"checked":""}> الإعلانات الموثّقة بس</label>
+  </aside>`;
+}
+function pageListings(){
+  const r=applyFilters();
+  return `<div class="wrap layout">
+    ${filtersPanel()}
+    <div>
+      <div class="bar">
+        <div><h2 style="font-size:20px">${F.purpose==="rent"?"عقارات للإيجار":F.purpose==="sale"?"عقارات للبيع":"كل العقارات"}${F.area?" في "+esc(F.area):""}</h2><span class="muted small"><span class="num">${r.length}</span> نتيجة</span></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <div class="seg"><button class="${listMode==="grid"?"on":""}" data-act="mode" data-v="grid">شبكة</button><button class="${listMode==="map"?"on":""}" data-act="mode" data-v="map">خريطة</button></div>
+          <select class="inp" id="fsort" data-f="sort" style="width:auto;min-height:36px;padding:5px 10px" aria-label="الترتيب">${opts([["new","الأحدث"],["low","السعر: الأقل"],["high","السعر: الأعلى"],["ppm","أرخص سعر متر"]],F.sort)}</select>
+        </div>
+      </div>
+      ${listMode==="map"?mapSvg(r):(r.length?`<div class="cards">${r.map(card).join("")}</div>`:`<div class="empty"><h3>مفيش نتايج بالفلتر ده</h3><p>جرب توسّع السعر أو تختار منطقة تانية.</p><button class="btn" data-act="clearF">امسح الفلاتر</button></div>`)}
+    </div></div>`;
+}
+
+let mapSel=null;
+function mapSvg(list){
+  const onMap=list.filter(l=>AREAS[l.area]&&AREAS[l.area].x!=null);
+  const off=list.filter(l=>!(AREAS[l.area]&&AREAS[l.area].x!=null));
+  const pins=onMap.map((l,i)=>{const a=AREAS[l.area];const n=[...l.id].reduce((s,c)=>s+c.charCodeAt(0),0);const x=a.x+((n*37)%60-30),y=a.y+((n*53)%40-20);
+    const label=l.purpose==="rent"?fmt(l.price/1000)+"K":(l.price/1e6).toFixed(1).replace(/\.0$/,"")+"M";const w=label.length*8+14;
+    return `<g class="pin ${mapSel===l.id?"on":""}" data-act="pin" data-id="${l.id}" transform="translate(${x},${y})" tabindex="0" role="button" aria-label="${esc(l.title)}"><rect x="${-w/2}" y="-26" width="${w}" height="22" rx="11" fill="var(--brand)"/><path d="M-5 -5 0 3 5 -5z" fill="var(--brand)"/><text y="-11" text-anchor="middle" font-size="12" font-weight="700" fill="var(--brand-ink)" font-family="sans-serif">${label}</text></g>`}).join("");
+  const sel=mapSel&&byId(mapSel);
+  return `<div class="mapbox">
+    <svg class="map" viewBox="0 0 1000 600" role="img" aria-label="خريطة القاهرة الكبرى">
+      <rect width="1000" height="600" fill="var(--surface-2)"/>
+      <path d="M0 0h1000v600H0z" fill="none"/>
+      <path d="M455 0C470 120 440 200 470 300S500 450 510 600" stroke="#5DA9C9" stroke-width="18" fill="none" opacity=".6"/>
+      <path d="M455 0C470 120 440 200 470 300S500 450 510 600" stroke="#5DA9C9" stroke-width="4" fill="none"/>
+      <g stroke="var(--line)" stroke-width="3" fill="none"><path d="M100 380 Q300 360 470 300 T720 330 960 480"/><path d="M160 250 Q330 270 470 290"/><path d="M560 120 Q650 200 700 330 T860 520"/><path d="M600 200 Q750 240 850 235"/></g>
+      <g font-family="sans-serif" font-size="14" fill="var(--muted)" text-anchor="middle" font-weight="600">${Object.entries(AREAS).filter(([,a])=>a.x!=null).map(([n,a])=>`<text x="${a.x}" y="${a.y+34}">${n}</text>`).join("")}</g>
+      <text x="485" y="40" font-family="sans-serif" font-size="13" fill="#3B8FB0" font-weight="700">النيل</text>
+      ${pins}
+    </svg>
+    ${sel?`<div class="map-pop">${card(sel)}</div>`:""}
+    <div class="map-legend"><span>دوس على أي سعر عشان تشوف العقار</span>${off.length?`<span>· خارج القاهرة: ${off.map(l=>`<a href="#p-${l.id}">${esc(l.area)} (${money(l.price)})</a>`).join("، ")}</span>`:""}</div>
+  </div>`;
+}
+function pageMap(){
+  const r=applyFilters();
+  return `<div class="wrap" style="padding-block:20px">
+    <div class="bar"><div><h2 style="font-size:20px">العقارات على الخريطة</h2><span class="small muted">القاهرة الكبرى · <span class="num">${r.length}</span> إعلان</span></div>
+    <div class="seg">${[["","الكل"],["sale","بيع"],["rent","إيجار"]].map(([v,t])=>`<button class="${F.purpose===v?"on":""}" data-act="setF" data-k="purpose" data-v="${v}">${t}</button>`).join("")}</div></div>
+    ${mapSvg(r)}
+  </div>`;
+}
+
+let galIdx=0;
+function pageDetail(id){
+  const l=byId(id); if(!l) return `<div class="wrap empty" style="margin-top:30px">الإعلان ده مش موجود. <a href="#listings">ارجع للعقارات</a></div>`;
+  const similar=S.listings.filter(x=>x.id!==l.id&&x.status!=="sold"&&x.purpose===l.purpose&&(x.area===l.area||x.type===l.type)).slice(0,3);
+  const fav=S.favs.includes(l.id);
+  const leadsFor=S.leads.filter(c=>c.listingId===l.id); const pv=priv(l.id);
+  const msg=`السلام عليكم، أنا مهتم بالإعلان ده: ${l.title} - ${l.area} بسعر ${fmt(l.price)} ج.م`;
+  const n=photoCount(l); if(galIdx>=n) galIdx=0;
+  return `<div class="wrap">
+  <div style="padding-top:16px" class="small muted"><a href="#listings">العقارات</a> › ${esc(l.area)} › ${esc(l.type)}</div>
+  <div class="detail">
+    <div>
+      <div class="gallery"><div class="main">${photo(l,galIdx)}</div>
+        <div class="thumbs">${Array.from({length:n}).map((_,i)=>`<button class="${i===galIdx?"on":""}" data-act="gal" data-i="${i}" aria-label="صورة ${i+1}">${photo(l,i)}</button>`).join("")}</div></div>
+      <div class="panel" style="margin-top:16px">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:start">
+          <div style="min-width:0"><div class="chips" style="margin-bottom:6px">${l.featured?'<span class="badge gold">مميز</span>':""}${l.verified?`<span class="badge green">موثّق ✓${l.verifiedAt?" · اتراجع "+esc(l.verifiedAt):""}</span>`:""}<span class="badge" style="background:var(--surface-2)">${l.purpose==="rent"?"إيجار":"بيع"}</span>${l.status!=="active"?`<span class="badge dark">${l.status==="sold"?"اتباع":"محجوز"}</span>`:""}</div>
+          <h1 style="font-size:24px">${esc(l.title)}</h1>
+          <div class="loc" style="margin-top:4px">${IC.pin}${esc(l.area)}${l.compound?" · كمبوند "+esc(l.compound):""} · ${esc(AREAS[l.area]?.city||"")}</div></div>
+          <div style="display:flex;gap:6px"><button class="btn sm" data-act="fav" data-id="${l.id}">${fav?IC.heartF:IC.heart} ${fav?"في المفضلة":"احفظ"}</button><button class="btn sm" data-act="share" data-id="${l.id}">${IC.share} شارك</button></div>
+        </div>
+        <div class="kv" style="margin-top:16px">
+          <div><span>نوع العقار</span><b>${esc(l.type)}</b></div>
+          <div><span>المساحة</span><b><span class="num">${l.size}</span> م²</b></div>
+          ${l.beds?`<div><span>الغرف</span><b class="num">${l.beds}</b></div>`:""}
+          ${l.baths?`<div><span>الحمامات</span><b class="num">${l.baths}</b></div>`:""}
+          <div><span>الدور</span><b>${esc(l.floor)}</b></div>
+          <div><span>التشطيب</span><b>${esc(l.finishing)}</b></div>
+          <div><span>الاستلام</span><b>${l.delivery==="offplan"?"تحت الإنشاء":"استلام فوري"}</b></div>
+          <div><span>الدفع</span><b>${l.payment==="installment"?`تقسيط ${l.years} سنين`:"كاش"}</b></div>
+          <div><span>اتنشر</span><b>${ago(l.date)}</b></div>
+          <div><span>كود الإعلان</span><b class="num">${esc(String(l.id).toUpperCase().slice(-6))}</b></div>
+        </div>
+      </div>
+      <div class="panel"><h3>الوصف</h3><p style="margin:0;white-space:pre-line">${esc(l.desc)}</p></div>
+      ${l.features?.length?`<div class="panel"><h3>المميزات</h3><div class="feat">${l.features.map(f=>`<span>✓ ${esc(f)}</span>`).join("")}</div></div>`:""}
+      ${l.purpose==="sale"?`<div class="panel"><h3>احسب القسط</h3>
+        <div class="grid-form">
+          <div class="field"><label for="cDown">المقدم %</label><input class="inp num" id="cDown" type="number" min="0" max="100" value="${l.payment==="installment"?l.down:20}"></div>
+          <div class="field"><label for="cYears">عدد السنين</label><input class="inp num" id="cYears" type="number" min="1" max="15" value="${l.payment==="installment"?l.years:5}"></div>
+          <div class="field"><label for="cRate">فايدة سنوية % (لو بنك)</label><input class="inp num" id="cRate" type="number" min="0" max="40" value="0"></div>
+        </div>
+        <div class="calc-out" id="calcOut"></div></div>`:""}
+      ${similar.length?`<div style="margin-top:22px"><div class="sec-head"><h2 style="font-size:19px">عقارات شبهه</h2></div><div class="cards">${similar.map(card).join("")}</div></div>`:""}
+    </div>
+    <div class="sticky-side">
+      <div class="panel">
+        <div class="price" style="font-size:28px">${money(l.price)} <small>ج.م${l.purpose==="rent"?(l.type==="شاليه"?" / الليلة":" / شهرياً"):""}</small></div>
+        ${l.purpose==="sale"?`<div class="muted small">سعر المتر <b class="num">${fmt(l.price/l.size)}</b> ج.م${l.payment==="installment"?` · المقدم <b class="num">${fmt(l.price*l.down/100)}</b> ج.م`:""}</div>`:""}
+        <div class="broker" style="margin-top:14px"><div class="avatar">${esc(BROKER.name[0])}</div><div><b>${esc(BROKER.name)}</b><div class="small muted">${esc(BROKER.office)} · سمسار موثّق</div></div></div>
+        <div class="phone-line"><span class="num">${esc(BROKER.phone)}</span><button class="btn sm ghost" data-act="copy" data-v="${esc(BROKER.phone)}">${IC.copy} انسخ</button></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+          <a class="btn wa" href="${waLink(BROKER.phone,msg)}" target="_blank" rel="noopener">${IC.wa} واتساب</a>
+          <a class="btn primary" href="tel:${esc(BROKER.phone)}">${IC.phone} اتصل</a>
+        </div>
+      </div>
+      <form class="panel" id="viewForm">
+        <h3>احجز معاينة</h3>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="field"><label for="vName">اسمك</label><input class="inp" id="vName" required></div>
+          <div class="field"><label for="vPhone">رقم الموبايل</label><input class="inp num" id="vPhone" required inputmode="tel" placeholder="01xxxxxxxxx"></div>
+          <div class="field"><label for="vDate">اليوم المناسب</label><input class="inp" id="vDate" type="date" value="${addDays(1)}"></div>
+          <button class="btn accent" type="submit">${BROKER_MODE?"سجّل الطلب كعميل":"ابعت الطلب"}</button>
+          <span class="small muted">${BROKER_MODE?"الطلب هيتسجل في لوحة العملاء.":"هنجهزلك رسالة واتساب للسمسار فيها الإعلان والميعاد."}</span>
+        </div>
+      </form>
+      ${BROKER_MODE?`<div class="panel private">
+        <h3>🔒 بيانات خاصة بيك (العميل مش بيشوفها)</h3>
+        <div style="display:grid;gap:6px;font-size:14px">
+          <div>المالك: <b>${esc(pv.owner||"—")}</b></div>
+          ${pv.ownerPhone?`<div>رقم المالك: <b class="num">${esc(pv.ownerPhone)}</b> <button class="btn sm ghost" data-act="copy" data-v="${esc(pv.ownerPhone)}">${IC.copy}</button></div>`:""}
+          <div>العمولة المتفق عليها: <b class="num">${pv.commission||0}%</b>${l.purpose==="rent"?" من شهر":""}</div>
+          <div>عمولتك المتوقعة: <b style="color:var(--good)">${money(l.price*(pv.commission||0)/100)} ج.م</b></div>
+          <div>جودة الإعلان: ${qPill(quality(l))}${quality(l).miss.length?`<div class="small">عشان يبقى أقوى: ${esc(quality(l).miss.join("، "))}</div>`:""}</div>
+          <div>عملاء مهتمين: <b class="num">${leadsFor.length}</b>${leadsFor.length?` (${leadsFor.map(c=>esc(c.name)).join("، ")})`:""}</div>
+        </div>
+        <div class="field" style="margin-top:12px"><label for="lStatus">حالة العقار</label>
+          <select class="inp" id="lStatus" data-id="${l.id}">${opts([["active","متاح"],["reserved","محجوز"],["sold",l.purpose==="rent"?"اتأجر":"اتباع"]],l.status)}</select></div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><a class="btn sm" href="#edit-${l.id}">✎ عدّل الإعلان</a><a class="btn sm" href="#contract-${l.id}">📄 اعمل عقد</a><button class="btn sm" data-act="valuation" data-id="${l.id}">📊 تقييم سعر للمالك</button><button class="btn sm" data-act="shareText" data-id="${l.id}">${IC.copy} انسخ نص للفيسبوك</button></div>
+      </div>`:""}
+    </div>
+  </div></div>`;
+}
+
+function pageAdd(editId){
+  const E=editId?byId(editId):null, P=E?priv(E.id):{};
+  if(editId&&!E) return `<div class="wrap empty" style="margin-top:30px">الإعلان ده مش موجود.</div>`;
+  const v=(k,d="")=>esc(E?(E[k]??d):d);
+  return `<div class="wrap" style="padding-block:22px;max-width:900px">
+    <h1 style="font-size:24px">${E?"تعديل الإعلان":"أضف عقار جديد"}</h1>
+    <p class="muted" style="margin-top:4px">الإعلان هيظهر على طول في البحث والخريطة. بيانات المالك والعمولة بتفضل خاصة بيك.</p>
+    <form id="addForm" style="display:flex;flex-direction:column;gap:16px;margin-top:14px">
+      <div class="panel"><h3>أساسيات الإعلان</h3>
+        <div class="field" style="margin-bottom:14px"><label>الغرض</label><div class="seg" id="aPurposeSeg"><button type="button" class="${!E||E.purpose==="sale"?"on":""}" data-v="sale">بيع</button><button type="button" class="${E&&E.purpose==="rent"?"on":""}" data-v="rent">إيجار</button></div></div>
+        <div class="grid-form">
+          <div class="field" style="grid-column:1/-1"><label for="aTitle">عنوان الإعلان</label><input class="inp" id="aTitle" required value="${v("title")}" placeholder="مثلاً: شقة 3 غرف فيو جاردن في التجمع"></div>
+          <div class="field"><label for="aType">نوع العقار</label><select class="inp" id="aType">${opts(TYPES,E?E.type:"شقة")}</select></div>
+          <div class="field"><label for="aArea">المنطقة</label><select class="inp" id="aArea">${opts(Object.keys(AREAS),E?E.area:"التجمع الخامس")}</select></div>
+          <div class="field"><label for="aComp">الكمبوند (لو فيه)</label><input class="inp" id="aComp" value="${v("compound")}"></div>
+          <div class="field"><label for="aPrice">السعر (ج.م)</label><input class="inp num" id="aPrice" type="number" required min="1" inputmode="numeric" value="${v("price")}"></div>
+        </div></div>
+      <div class="panel"><h3>التفاصيل</h3>
+        <div class="grid-form">
+          <div class="field"><label for="aSize">المساحة م²</label><input class="inp num" id="aSize" type="number" required min="1" value="${v("size")}"></div>
+          <div class="field"><label for="aBeds">الغرف</label><input class="inp num" id="aBeds" type="number" min="0" value="${v("beds",3)}"></div>
+          <div class="field"><label for="aBaths">الحمامات</label><input class="inp num" id="aBaths" type="number" min="0" value="${v("baths",2)}"></div>
+          <div class="field"><label for="aFloor">الدور</label><input class="inp" id="aFloor" value="${v("floor")}" placeholder="مثلاً: التالت"></div>
+          <div class="field"><label for="aFin">التشطيب</label><select class="inp" id="aFin">${opts(FINISH,E?E.finishing:"تشطيب كامل")}</select></div>
+          <div class="field"><label for="aDel">الاستلام</label><select class="inp" id="aDel">${opts([["ready","استلام فوري"],["offplan","تحت الإنشاء"]],E?E.delivery||"ready":"ready")}</select></div>
+          <div class="field"><label for="aPay">الدفع</label><select class="inp" id="aPay">${opts([["cash","كاش"],["installment","تقسيط"]],E?E.payment:"cash")}</select></div>
+          <div class="field"><label for="aDown">المقدم % (للتقسيط)</label><input class="inp num" id="aDown" type="number" min="0" max="100" value="${v("down",10)}"></div>
+          <div class="field"><label for="aYears">سنين التقسيط</label><input class="inp num" id="aYears" type="number" min="0" max="15" value="${v("years",7)}"></div>
+        </div>
+        <div class="field" style="margin-top:14px"><label>المميزات</label><div class="chips" id="aFeat">${FEATURES.map(f=>`<button type="button" class="chip ${E&&E.features.includes(f)?"on":""}" data-v="${esc(f)}">${esc(f)}</button>`).join("")}</div></div>
+        <div class="field" style="margin-top:14px"><label for="aDesc">الوصف</label><textarea class="inp" id="aDesc" placeholder="اكتب أهم حاجة تشد العميل: الفيو، القرب من الخدمات، حالة الاستلام…">${v("desc")}</textarea>
+        <button type="button" class="btn sm" id="autoDesc" style="margin-top:8px;align-self:start">✨ اكتبلي وصف تلقائي من البيانات</button></div>
+      </div>
+      <div class="panel"><h3>الصور</h3>
+        <input type="file" id="aImgs" accept="image/*" multiple class="inp">
+        <div class="thumbs" id="aPrev">${E&&E.images?E.images.map(s=>`<button type="button"><img src="${esc(s)}" alt=""></button>`).join(""):""}</div>
+        <span class="small muted">لحد 6 صور، وبيتحط عليها اسم ${esc(APP.name)} تلقائي عشان محدش ينقلها. لو مارفعتش صور، هنحط رسم توضيحي مؤقت.</span>
+      </div>
+      <div class="panel private"><h3>🔒 بيانات المالك والعمولة (خاصة بيك)</h3>
+        <div class="grid-form">
+          <div class="field"><label for="aOwner">اسم المالك</label><input class="inp" id="aOwner" value="${esc(P.owner||"")}"></div>
+          <div class="field"><label for="aOPhone">رقم المالك</label><input class="inp num" id="aOPhone" inputmode="tel" value="${esc(P.ownerPhone||"")}"></div>
+          <div class="field"><label for="aComm">العمولة %</label><input class="inp num" id="aComm" type="number" step="0.5" min="0" value="${esc(P.commission??2.5)}"></div>
+        </div>
+        <label class="check" style="margin-top:10px"><input type="checkbox" id="aFeatOn" ${E&&E.featured?"checked":""}> اعرضه كإعلان مميز</label>
+        <label class="check" style="margin-top:6px"><input type="checkbox" id="aVer" ${!E||E.verified?"checked":""}> راجعت الأوراق والعقد بنفسي (يظهر "موثّق" بتاريخ النهارده)</label>
+      </div>
+      <div style="display:flex;gap:10px"><button class="btn primary" type="submit" data-edit="${E?E.id:""}">${E?"احفظ التعديل":"انشر الإعلان"}</button><a class="btn" href="${E?"#p-"+E.id:"#listings"}">إلغاء</a></div>
+    </form></div>`;
+}
+
+/* ===== لوحة السمسار ===== */
+function dashTabs(cur){
+  const t=[["dashboard","نظرة عامة"],["dash-leads","العملاء"],["dash-deals","العمولات"],["dash-cal","المواعيد"],["dash-props","عقاراتي"],["dash-owners","الملاك"],["dash-report","التقرير الشهري"],["dash-settings","الإعدادات"]];
+  return `<div class="dash-tabs">${t.map(([k,v])=>`<a href="#${k}" class="${cur===k?"on":""}">${v}</a>`).join("")}</div>`;
+}
+function pageDash(){
+  const active=S.listings.filter(l=>l.status==="active").length;
+  const open=S.leads.filter(c=>!["won","lost"].includes(c.stage));
+  const due=open.filter(c=>c.next&&c.next<=today()).sort((a,b)=>a.next.localeCompare(b.next));
+  const ym=today().slice(0,7);
+  const recMonth=S.deals.filter(d=>d.status==="received"&&d.date.slice(0,7)===ym).reduce((s,d)=>s+commOf(d),0);
+  const expected=S.deals.filter(d=>d.status==="expected").reduce((s,d)=>s+commOf(d),0);
+  const recYear=S.deals.filter(d=>d.status==="received"&&d.date.slice(0,4)===ym.slice(0,4)).reduce((s,d)=>s+commOf(d),0);
+  const months=Array.from({length:6}).map((_,i)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-(5-i));const k=d.toISOString().slice(0,7);
+    return {k,lab:d.toLocaleDateString("ar-EG",{month:"short"}),rec:S.deals.filter(x=>x.status==="received"&&x.date.slice(0,7)===k).reduce((s,x)=>s+commOf(x),0),exp:S.deals.filter(x=>x.status==="expected"&&x.date.slice(0,7)===k).reduce((s,x)=>s+commOf(x),0)}});
+  const mx=Math.max(1,...months.map(m=>m.rec+m.exp));
+  const fc=STAGES.map(s=>({...s,n:S.leads.filter(c=>c.stage===s.k).length})); const fmx=Math.max(1,...fc.map(x=>x.n));
+  const reserved=S.listings.filter(l=>l.status==="reserved").length;
+  return `<div class="wrap">${dashTabs("dashboard")}
+    <div class="kpis" style="margin-top:12px">
+      <div class="kpi"><span>عمولة الشهر ده (اتقبضت)</span><b>${money(recMonth)} <small class="small muted">ج.م</small></b><em>السنة كلها: ${money(recYear)} ج.م</em></div>
+      <div class="kpi"><span>عمولات متوقعة</span><b style="color:var(--accent)">${money(expected)} <small class="small muted">ج.م</small></b><em style="color:var(--muted)">${S.deals.filter(d=>d.status==="expected").length} صفقات في الطريق</em></div>
+      <div class="kpi"><span>عملاء مفتوحين</span><b class="num">${open.length}</b><em>${S.leads.filter(c=>c.stage==="new").length} جداد</em></div>
+      <div class="kpi"><span>عقارات متاحة</span><b class="num">${active}</b><em style="color:var(--muted)"><span class="num">${reserved}</span> محجوز</em></div>
+    </div>
+    <div class="two">
+      <div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h3 style="margin:0">العمولات آخر 6 شهور</h3><div class="legend"><span><i style="background:var(--brand)"></i>اتقبضت</span><span><i style="background:var(--accent)"></i>متوقعة</span></div></div>
+        <div class="bars">${months.map(m=>`<div class="b"><small class="num">${m.rec+m.exp?Math.round((m.rec+m.exp)/1000)+"K":""}</small><div class="stack" style="height:${(m.rec+m.exp)/mx*130}px"><div class="exp" style="height:${m.exp/(m.rec+m.exp||1)*100}%"></div><div class="rec" style="height:${m.rec/(m.rec+m.exp||1)*100}%"></div></div><small>${m.lab}</small></div>`).join("")}</div></div>
+      <div class="panel"><h3>متابعات النهارده ${due.length?`<span class="pill p-late">${due.length}</span>`:""}</h3>
+        <div class="list">${due.length?due.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="small muted">${esc(c.notes||"")}</div></div>${c.next<today()?'<span class="pill p-late">متأخرة</span>':'<span class="pill p-viewing">النهارده</span>'}<a class="btn sm wa" href="${waLink(c.phone,"أهلاً "+c.name+"، معاك "+BROKER.name+" من "+APP.name)}" target="_blank" rel="noopener" aria-label="واتساب">${IC.wa}</a></div>`).join(""):'<div class="muted">مفيش متابعات متأخرة 👌</div>'}</div></div>
+    </div>
+    <div class="two">
+      <div class="panel funnel"><h3>مراحل العملاء</h3>${fc.map(s=>`<div class="f"><span>${s.t}</span><div class="track"><div class="fill" style="width:${s.n/fmx*100}%;${s.k==="lost"?"background:var(--bad)":s.k==="won"?"background:var(--good)":""}"></div></div><b class="num">${s.n}</b></div>`).join("")}</div>
+      <div class="panel"><h3>أكتر عقارات عليها طلب</h3><div class="list">${(()=>{const r=[...S.listings].filter(l=>l.status!=="sold").map(l=>({l,n:S.leads.filter(c=>c.listingId===l.id).length,m:S.leads.filter(c=>!["won","lost"].includes(c.stage)&&matches(c).some(x=>x.id===l.id)).length})).sort((a,b)=>(b.n+b.m)-(a.n+a.m)).slice(0,5);return r.length?r.map(({l,n,m})=>`<div class="row"><div><a href="#p-${l.id}"><b>${esc(l.title)}</b></a><div class="small muted">${esc(l.area)} · ${money(l.price)} ج.م</div></div><span class="small"><b class="num">${n}</b> مهتم · <b class="num">${m}</b> مناسب</span></div>`).join(""):'<div class="muted">ضيف عقارات وعملاء وهتظهر هنا.</div>'})()}</div></div>
+    </div>
+    <div class="two">
+      <div class="panel"><h3>إعلانات محتاجة تجديد</h3><div class="list">${(()=>{const r=S.listings.filter(l=>l.status==="active"&&daysAgo(l.date)>=45);return r.length?r.map(l=>`<div class="row"><div><a href="#p-${l.id}"><b>${esc(l.title)}</b></a><div class="small muted">منشور ${ago(l.date)}</div></div><button class="btn sm" data-act="renew" data-id="${l.id}">جدّد</button></div>`).join(""):'<div class="muted">كل إعلاناتك جديدة 👌</div>'})()}</div></div>
+      <div class="panel"><h3>إعلانات ضعيفة محتاجة تحسين</h3><div class="list">${(()=>{const r=S.listings.filter(l=>l.status!=="sold").map(l=>({l,q:quality(l)})).filter(x=>x.q.level!=="good").sort((a,b)=>a.q.score-b.q.score).slice(0,5);return r.length?r.map(({l,q})=>`<div class="row"><div><a href="#edit-${l.id}"><b>${esc(l.title)}</b></a><div class="small muted">${esc(q.miss.slice(0,2).join("، "))}</div></div>${qPill(q)}</div>`).join(""):'<div class="muted">كل إعلاناتك قوية 💪</div>'})()}</div></div>
+    </div>
+    ${demoBanner()}
+  </div>`;
+}
+let showLeadForm=false;
+function leadCard(c){
+  const m=matches(c), i=STAGES.findIndex(s=>s.k===c.stage), lst=c.listingId&&byId(c.listingId);
+  const n=c.need||{};
+  return `<div class="lead">
+    <div style="display:flex;justify-content:space-between;gap:6px"><b>${esc(c.name)}</b><span class="small muted">${esc(c.source)}</span></div>
+    <div class="small muted">${n.purpose==="rent"?"إيجار":"شراء"} ${esc(n.type||"أي نوع")}${n.area?" · "+esc(n.area):""}${n.max?` · لحد ${money(n.max)}`:""}</div>
+    ${hot(c)?'<div><span class="pill p-late">🔥 عميل سخن</span></div>':""}
+    ${lst?`<div class="small">مهتم بـ: <a href="#p-${lst.id}">${esc(lst.title)}</a></div>`:""}
+    ${c.lastContact?`<div class="small muted">آخر تواصل: ${ago(c.lastContact)}</div>`:""}
+    ${c.notes?`<div class="small">📝 ${esc(c.notes)}</div>`:""}
+    ${!["won","lost"].includes(c.stage)?`<a class="match small" href="#listings" data-act="matchGo" data-id="${c.id}">🎯 ${m.length} عقار مناسب ليه</a>`:""}
+    ${c.next&&!["won","lost"].includes(c.stage)?`<div class="small"><span class="pill ${c.next<today()?"p-late":c.next===today()?"p-viewing":"p-contacted"}">متابعة: ${c.next===today()?"النهارده":c.next<today()?"متأخرة":c.next}</span></div>`:""}
+    <div class="acts">
+      ${i>0?`<button class="btn sm" data-act="stage" data-id="${c.id}" data-d="-1" aria-label="رجّع مرحلة">→</button>`:""}
+      ${i<STAGES.length-2?`<button class="btn sm" data-act="stage" data-id="${c.id}" data-d="1">${STAGES[i+1].t} ←</button>`:""}
+      <a class="btn sm wa" href="${waLink(c.phone,"أهلاً "+c.name+"، معاك "+BROKER.name+" من "+APP.name)}" target="_blank" rel="noopener" aria-label="واتساب">${IC.wa}</a>
+      <button class="btn sm ghost" data-act="copy" data-v="${esc(c.phone)}" aria-label="انسخ الرقم">${IC.copy}</button>
+      ${!["won","lost"].includes(c.stage)?`<button class="btn sm ghost danger" data-act="stageTo" data-id="${c.id}" data-s="lost">إلغاء</button>`:""}
+    </div>
+    ${!["won","lost"].includes(c.stage)?`<details class="small"><summary style="cursor:pointer;color:var(--brand);font-weight:600">رسايل جاهزة ومتابعة</summary>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">${tpls(c).map(([t,m])=>`<a class="btn sm" style="justify-content:flex-start" href="${waLink(c.phone,m)}" target="_blank" rel="noopener" data-act="touch" data-id="${c.id}">${IC.wa} ${t}</a>`).join("")}</div>
+      <div style="margin-top:6px">تابع: ${[[1,"بكره"],[3,"بعد 3 أيام"],[7,"بعد أسبوع"]].map(([d,t])=>`<button class="btn sm" data-act="follow" data-id="${c.id}" data-d="${d}">${t}</button>`).join(" ")}</div>
+    </details>`:""}
+  </div>`;
+}
+function pageLeads(){
+  return `<div class="wrap">${dashTabs("dash-leads")}
+    <div class="bar" style="margin-top:12px"><div><h2 style="font-size:20px">العملاء والمتابعات</h2><span class="small muted">حرّك العميل من مرحلة للتانية لحد ما الصفقة تتقفل</span></div><button class="btn primary" data-act="toggleLead">${IC.plus} عميل جديد</button></div>
+    ${showLeadForm?`<form class="drawer" id="leadForm"><h3 style="margin-bottom:12px">عميل جديد</h3><div class="grid-form">
+      <div class="field"><label for="lName">الاسم</label><input class="inp" id="lName" required></div>
+      <div class="field"><label for="lPhone">الموبايل</label><input class="inp num" id="lPhone" required inputmode="tel"></div>
+      <div class="field"><label for="lSrc">جه منين</label><select class="inp" id="lSrc">${opts(SOURCES,"فيسبوك")}</select></div>
+      <div class="field"><label for="lPur">عاوز</label><select class="inp" id="lPur">${opts([["sale","شراء"],["rent","إيجار"]],"sale")}</select></div>
+      <div class="field"><label for="lType">نوع العقار</label><select class="inp" id="lType">${opts(TYPES,"","أي نوع")}</select></div>
+      <div class="field"><label for="lArea">المنطقة</label><select class="inp" id="lArea">${opts(Object.keys(AREAS),"","أي منطقة")}</select></div>
+      <div class="field"><label for="lMax">الميزانية لحد (ج.م)</label><input class="inp num" id="lMax" type="number" inputmode="numeric"></div>
+      <div class="field"><label for="lBeds">غرف على الأقل</label><input class="inp num" id="lBeds" type="number" min="0"></div>
+      <div class="field"><label for="lNext">ميعاد المتابعة</label><input class="inp" id="lNext" type="date" value="${addDays(1)}"></div>
+      <div class="field" style="grid-column:1/-1"><label for="lNotes">ملاحظات</label><input class="inp" id="lNotes"></div>
+    </div><div style="display:flex;gap:8px;margin-top:12px"><button class="btn primary" type="submit">احفظ العميل</button><button class="btn" type="button" data-act="toggleLead">إلغاء</button></div></form>`:""}
+    <div class="board">${STAGES.map(s=>{const cs=S.leads.filter(c=>c.stage===s.k);return `<div class="col"><h4>${s.t} <span class="pill p-${s.k}">${cs.length}</span></h4>${cs.map(leadCard).join("")||'<span class="small muted">فاضي</span>'}</div>`}).join("")}</div>
+  </div>`;
+}
+let showDealForm=false;
+function pageDeals(){
+  const rec=S.deals.filter(d=>d.status==="received").reduce((s,d)=>s+commOf(d),0);
+  const exp=S.deals.filter(d=>d.status==="expected").reduce((s,d)=>s+commOf(d),0);
+  const ds=[...S.deals].sort((a,b)=>b.date.localeCompare(a.date));
+  return `<div class="wrap">${dashTabs("dash-deals")}
+    <div class="kpis" style="margin-top:12px">
+      <div class="kpi"><span>إجمالي اللي اتقبض</span><b style="color:var(--good)">${money(rec)} <small class="small muted">ج.م</small></b></div>
+      <div class="kpi"><span>متوقع تقبضه</span><b style="color:var(--accent)">${money(exp)} <small class="small muted">ج.م</small></b></div>
+      <div class="kpi"><span>عدد الصفقات</span><b class="num">${S.deals.length}</b></div>
+      <div class="kpi"><span>متوسط العمولة للصفقة</span><b>${money(S.deals.length?(rec+exp)/S.deals.length:0)} <small class="small muted">ج.م</small></b></div>
+    </div>
+    <div class="two">
+      <div class="panel"><h3>حاسبة العمولة</h3>
+        <div class="grid-form">
+          <div class="field"><label for="kPrice">سعر الصفقة</label><input class="inp num" id="kPrice" type="number" value="5000000"></div>
+          <div class="field"><label for="kPct">العمولة %</label><input class="inp num" id="kPct" type="number" step="0.5" value="2.5"></div>
+          <div class="field"><label for="kSplit">نصيب سمسار شريك %</label><input class="inp num" id="kSplit" type="number" value="0" min="0" max="100"></div>
+        </div><div class="calc-out" id="kOut"></div></div>
+      <div class="panel"><div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">سجّل صفقة</h3><button class="btn sm primary" data-act="toggleDeal">${showDealForm?"اقفل":"+ صفقة جديدة"}</button></div>
+        ${showDealForm?`<form id="dealForm" style="margin-top:12px"><div class="grid-form">
+          <div class="field"><label for="dTitle">العقار</label><input class="inp" id="dTitle" required placeholder="شقة 150م - الرحاب"></div>
+          <div class="field"><label for="dClient">العميل</label><input class="inp" id="dClient"></div>
+          <div class="field"><label for="dPrice">السعر</label><input class="inp num" id="dPrice" type="number" required></div>
+          <div class="field"><label for="dPct">العمولة %</label><input class="inp num" id="dPct" type="number" step="0.5" value="2.5"></div>
+          <div class="field"><label for="dSplit">نصيب شريك %</label><input class="inp num" id="dSplit" type="number" value="0"></div>
+          <div class="field"><label for="dStatus">الحالة</label><select class="inp" id="dStatus">${opts([["expected","متوقعة"],["received","اتقبضت"]],"expected")}</select></div>
+          <div class="field"><label for="dStage">المرحلة</label><select class="inp" id="dStage">${opts(DEAL_STAGES,"حجز")}</select></div>
+          <div class="field"><label for="dDue">ميعاد قبض العمولة</label><input class="inp" id="dDue" type="date" value="${addDays(30)}"></div>
+          <div class="field"><label for="dDate">التاريخ</label><input class="inp" id="dDate" type="date" value="${today()}"></div>
+        </div><button class="btn primary" style="margin-top:12px" type="submit">احفظ</button></form>`:'<p class="muted small" style="margin:10px 0 0">لما تقفل بيعة أو إيجار، سجّلها هنا عشان تعرف دخلك الحقيقي كل شهر وتتابع العمولات اللي لسه ماتقبضتش.</p>'}
+      </div>
+    </div>
+    <div class="tbl-wrap" style="margin-top:16px"><table><thead><tr><th>التاريخ</th><th>العقار</th><th>العميل</th><th>السعر</th><th>العمولة</th><th>نصيبك</th><th>المرحلة</th><th>ميعاد القبض</th><th>الحالة</th><th></th></tr></thead><tbody>
+      ${ds.map(d=>`<tr><td class="num">${d.date}</td><td>${esc(d.title)}</td><td>${esc(d.client)}</td><td>${money(d.price)}</td><td class="num">${d.pct}%${d.split?` (شريك ${d.split}%)`:""}</td><td><b>${money(commOf(d))}</b></td><td><select class="inp" style="min-height:32px;padding:3px 8px;width:auto" data-act="dealStage" data-id="${d.id}" aria-label="المرحلة">${opts(DEAL_STAGES,d.stage||(d.status==="received"?"اتقفلت":"حجز"))}</select></td><td>${d.due?(d.status!=="received"&&d.due<today()?`<span class="pill p-late">${esc(d.due)} متأخر</span>`:`<span class="num">${esc(d.due)}</span>`):"—"}</td><td>${d.status==="received"?'<span class="pill p-won">اتقبضت</span>':`<button class="btn sm" data-act="dealRec" data-id="${d.id}">${IC.check} اتقبضت</button>`}</td><td><button class="btn sm ghost danger" data-act="dealDel" data-id="${d.id}" aria-label="امسح">✕</button></td></tr>`).join("")}
+    </tbody></table></div>
+  </div>`;
+}
+function pageCal(){
+  const open=S.leads.filter(c=>c.next&&!["won","lost"].includes(c.stage));
+  const late=open.filter(c=>c.next<today());
+  const days=Array.from({length:14}).map((_,i)=>addDays(i));
+  const item=c=>`<div class="row"><div><b>${esc(c.name)}</b> <span class="pill p-${c.stage}">${STAGES.find(s=>s.k===c.stage).t}</span><div class="small muted">${esc(c.notes||"")}${c.listingId&&byId(c.listingId)?" · "+esc(byId(c.listingId).title):""}</div></div><a class="btn sm wa" href="${waLink(c.phone,tpls(c)[2][1])}" target="_blank" rel="noopener" data-act="touch" data-id="${c.id}" aria-label="واتساب">${IC.wa}</a></div>`;
+  return `<div class="wrap">${dashTabs("dash-cal")}
+  <div class="bar" style="margin-top:12px"><div><h2 style="font-size:20px">المعاينات والمتابعات</h2><span class="small muted">الـ 14 يوم الجايين</span></div></div>
+  ${late.length?`<div class="panel" style="border-color:var(--bad)"><h3 style="color:var(--bad)">متأخرة (${late.length})</h3><div class="list">${late.map(item).join("")}</div></div>`:""}
+  <div class="kpis" style="margin-top:16px">${days.map(d=>{const cs=open.filter(c=>c.next===d);const dt=new Date(d);return `<div class="kpi" style="${d===today()?"border-color:var(--brand)":""}"><span>${d===today()?"النهارده":dt.toLocaleDateString("ar-EG",{weekday:"long",day:"numeric",month:"short"})}</span>${cs.length?`<div class="list">${cs.map(item).join("")}</div>`:'<div class="small muted" style="margin-top:6px">فاضي</div>'}</div>`}).join("")}</div></div>`;
+}
+function ownersList(){
+  const g={};
+  S.listings.forEach(l=>{const o=priv(l.id); const k=(o.ownerPhone||o.owner||"").trim(); if(!k) return; (g[k] ||= {name:o.owner||"—",phone:o.ownerPhone||"",items:[]}).items.push(l);});
+  return Object.values(g).sort((a,b)=>b.items.length-a.items.length);
+}
+function ownerReport(o){
+  return `أهلاً يا ${o.name}، معاك ${BROKER.name} من ${APP.name}. ده تقرير عن عقاراتك معانا:\n`+o.items.map(l=>{const n=S.leads.filter(c=>c.listingId===l.id).length, m=S.leads.filter(c=>!["won","lost"].includes(c.stage)&&matches(c).some(x=>x.id===l.id)).length;
+    return `• ${l.title} (${fmt(l.price)} ج.م): ${l.status==="sold"?"اتباع ✓":l.status==="reserved"?"محجوز":"معروض"} · ${n} عميل سأل عليه · ${m} عميل مناسب ليه`;}).join("\n")+`\nلو حابب نراجع السعر أو نعمل عرض، كلمني.`;
+}
+const RESID=["شقة","دوبلكس","بنتهاوس","استوديو"];
+function valuation(l){
+  const sim=S.listings.filter(x=>x.id!==l.id&&x.purpose===l.purpose&&x.area===l.area&&x.size>0&&(x.type===l.type||(RESID.includes(x.type)&&RESID.includes(l.type))));
+  if(!sim.length||!l.size) return null;
+  const ppm=sim.map(x=>x.price/x.size).sort((a,b)=>a-b); const mid=ppm[Math.floor(ppm.length/2)];
+  const est=mid*l.size; return {n:sim.length,mid,low:est*0.93,high:est*1.07,est};
+}
+function pageOwners(){
+  const os=ownersList();
+  return `<div class="wrap">${dashTabs("dash-owners")}
+  <div class="bar" style="margin-top:12px"><div><h2 style="font-size:20px">دليل الملاك (${os.length})</h2><span class="small muted">كل مالك وعقاراته، وتقرير جاهز تبعتهوله على الواتساب</span></div></div>
+  ${os.length?`<div class="cards">${os.map(o=>`<div class="panel" style="margin:0"><div class="broker"><div class="avatar">${esc((o.name||"؟").replace(/^(أ|م|د)\.\s*/,"").charAt(0)||"؟")}</div><div style="min-width:0"><b>${esc(o.name)}</b><div class="small muted num">${esc(o.phone)}</div></div></div>
+    <div class="list" style="margin-top:8px">${o.items.map(l=>`<div class="row"><div><a href="#p-${l.id}">${esc(l.title)}</a><div class="small muted">${money(l.price)} ج.م · ${l.status==="sold"?"اتباع":l.status==="reserved"?"محجوز":"متاح"}</div></div></div>`).join("")}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${o.phone?`<a class="btn sm wa" href="${waLink(o.phone,ownerReport(o))}" target="_blank" rel="noopener">${IC.wa} ابعت تقرير</a><button class="btn sm ghost" data-act="copy" data-v="${esc(o.phone)}">${IC.copy} الرقم</button>`:""}</div></div>`).join("")}</div>`:'<div class="empty">لما تضيف عقار وتكتب بيانات المالك، هيظهر هنا.</div>'}</div>`;
+}
+let repMonth=null;
+function pageReport(){
+  const m=repMonth||today().slice(0,7); const inM=d=>String(d||"").slice(0,7)===m;
+  const leads=S.leads.filter(c=>inM(c.created)); const bySrc={}; leads.forEach(c=>bySrc[c.source]=(bySrc[c.source]||0)+1);
+  const viewing=leads.filter(c=>["viewing","negotiation","won"].includes(c.stage)).length, won=leads.filter(c=>c.stage==="won").length;
+  const dealsM=S.deals.filter(d=>inM(d.date)); const rec=dealsM.filter(d=>d.status==="received").reduce((a,d)=>a+commOf(d),0), exp=dealsM.filter(d=>d.status!=="received").reduce((a,d)=>a+commOf(d),0);
+  const added=S.listings.filter(l=>inM(l.date)).length;
+  const conv=leads.length?Math.round(won/leads.length*100):0;
+  const mx=Math.max(1,...Object.values(bySrc));
+  const txt=`تقرير شهر ${m}\nعملاء جداد: ${leads.length}\nوصلوا لمعاينة أو أكتر: ${viewing}\nصفقات اتقفلت: ${won} (نسبة التحويل ${conv}%)\nعمولات اتقبضت: ${fmt(rec)} ج.م\nعمولات متوقعة: ${fmt(exp)} ج.م\nعقارات اتضافت: ${added}\nمصادر العملاء: ${Object.entries(bySrc).map(([k,v])=>k+" "+v).join("، ")||"—"}`;
+  return `<div class="wrap">${dashTabs("dash-report")}
+  <div class="bar" style="margin-top:12px"><h2 style="font-size:20px">التقرير الشهري</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><input class="inp" type="month" id="repM" value="${m}" style="width:auto" aria-label="الشهر"><button class="btn" data-act="copy" data-v="${esc(txt)}">${IC.copy} انسخ التقرير</button></div></div>
+  <div class="kpis">
+    <div class="kpi"><span>عملاء جداد</span><b class="num">${leads.length}</b></div>
+    <div class="kpi"><span>وصلوا لمعاينة</span><b class="num">${viewing}</b></div>
+    <div class="kpi"><span>صفقات اتقفلت</span><b class="num">${won}</b><em>نسبة التحويل ${conv}%</em></div>
+    <div class="kpi"><span>عمولات اتقبضت</span><b style="color:var(--good)">${money(rec)} <small class="small muted">ج.م</small></b></div>
+    <div class="kpi"><span>عمولات متوقعة</span><b style="color:var(--accent)">${money(exp)} <small class="small muted">ج.م</small></b></div>
+    <div class="kpi"><span>عقارات اتضافت</span><b class="num">${added}</b></div>
+  </div>
+  <div class="panel" style="margin-top:16px"><h3>العملاء جايين منين</h3>${Object.keys(bySrc).length?`<div class="funnel">${Object.entries(bySrc).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="f"><span>${esc(k)}</span><div class="track"><div class="fill" style="width:${v/mx*100}%"></div></div><b class="num">${v}</b></div>`).join("")}</div>`:'<div class="muted">مفيش عملاء في الشهر ده.</div>'}</div></div>`;
+}
+function pageContract(id){
+  const l=byId(id); if(!l) return `<div class="wrap empty" style="margin-top:30px">الإعلان مش موجود.</div>`;
+  const o=priv(l.id), rent=l.purpose==="rent";
+  return `<div class="wrap" style="padding-block:22px;max-width:900px"><div class="small muted"><a href="#p-${l.id}">${esc(l.title)}</a> › عقد</div>
+  <h1 style="font-size:24px;margin-top:6px">${rent?"عقد إيجار":"عقد بيع ابتدائي"}</h1>
+  <p class="muted small">املا البيانات والعقد بيتكتب لوحده. ده نموذج استرشادي، راجعه مع محامي قبل التوقيع.</p>
+  <form class="panel" id="ctForm" data-id="${l.id}"><div class="grid-form">
+    <div class="field"><label for="ctA">${rent?"المؤجر":"البائع"} (الطرف الأول)</label><input class="inp" id="ctA" value="${esc(o.owner||"")}"></div>
+    <div class="field"><label for="ctAid">رقمه القومي</label><input class="inp num" id="ctAid"></div>
+    <div class="field"><label for="ctB">${rent?"المستأجر":"المشتري"} (الطرف التاني)</label><input class="inp" id="ctB"></div>
+    <div class="field"><label for="ctBid">رقمه القومي</label><input class="inp num" id="ctBid"></div>
+    <div class="field"><label for="ctAddr">عنوان العقار بالتفصيل</label><input class="inp" id="ctAddr" value="${esc(l.area+(l.compound?" - "+l.compound:"")+(l.floor&&l.floor!=="—"?" - الدور "+l.floor:""))}"></div>
+    <div class="field"><label for="ctPrice">${rent?"الإيجار الشهري":"الثمن الإجمالي"}</label><input class="inp num" id="ctPrice" type="number" value="${l.price}"></div>
+    <div class="field"><label for="ctPaid">${rent?"التأمين":"المدفوع عند التوقيع"}</label><input class="inp num" id="ctPaid" type="number" value="${rent?l.price:Math.round(l.price*(l.payment==="installment"?l.down:10)/100)}"></div>
+    <div class="field"><label for="ctTerm">${rent?"مدة الإيجار (شهور)":"ميعاد التسليم"}</label><input class="inp" id="ctTerm" value="${rent?"12":(l.delivery==="offplan"?"حسب جدول المطور":"عند سداد كامل الثمن")}"></div>
+    <div class="field"><label for="ctDate">تاريخ العقد</label><input class="inp" id="ctDate" type="date" value="${today()}"></div>
+    <div class="field"><label for="ctComm">عمولة السمسار %</label><input class="inp num" id="ctComm" type="number" step="0.5" value="${o.commission||(rent?50:2.5)}"></div>
+  </div></form>
+  <div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h3 style="margin:0">نص العقد</h3><button class="btn primary" type="button" id="ctCopy">${IC.copy} انسخ العقد</button></div>
+  <textarea class="inp" id="ctOut" style="min-height:420px;margin-top:10px;line-height:1.9" readonly aria-label="نص العقد"></textarea></div></div>`;
+}
+function contractText(l){
+  const v=i=>{const x=document.getElementById(i);return x&&x.value?x.value:"........";}; const rent=l.purpose==="rent";
+  const n=i=>fmt(+(document.getElementById(i)||{}).value||0);
+  return rent?`عقد إيجار
+
+إنه في يوم ${v("ctDate")} تحرر هذا العقد بين كل من:
+أولاً: السيد/ ${v("ctA")} - رقم قومي: ${v("ctAid")} (طرف أول مؤجر)
+ثانياً: السيد/ ${v("ctB")} - رقم قومي: ${v("ctBid")} (طرف ثان مستأجر)
+
+البند الأول: أجّر الطرف الأول للطرف الثاني ${l.type} بمساحة ${l.size} م² بالعنوان: ${v("ctAddr")}، والطرف الثاني عاينها المعاينة النافية للجهالة.
+البند الثاني: مدة الإيجار ${v("ctTerm")} شهر تبدأ من تاريخ هذا العقد، ولا تتجدد إلا بعقد جديد واتفاق الطرفين.
+البند الثالث: القيمة الإيجارية الشهرية ${n("ctPrice")} جنيه، تُدفع مقدماً أول كل شهر.
+البند الرابع: دفع الطرف الثاني مبلغ ${n("ctPaid")} جنيه تأمين، يُرد عند انتهاء العقد وتسليم العين بحالتها.
+البند الخامس: يلتزم الطرف الثاني بالمحافظة على العين وعدم التأجير من الباطن أو تغيير النشاط دون موافقة كتابية.
+البند السادس: استهلاك الكهرباء والمياه والغاز على الطرف الثاني.
+البند السابع: عمولة الوسيط ${BROKER.name} (${APP.name}) ${v("ctComm")}% من قيمة شهر إيجار.
+البند الثامن: تحرر هذا العقد من نسختين بيد كل طرف نسخة للعمل بها.
+
+الطرف الأول: ................        الطرف الثاني: ................
+الوسيط: ${BROKER.name} - ${BROKER.phone}`
+  :`عقد بيع ابتدائي
+
+إنه في يوم ${v("ctDate")} تحرر هذا العقد بين كل من:
+أولاً: السيد/ ${v("ctA")} - رقم قومي: ${v("ctAid")} (طرف أول بائع)
+ثانياً: السيد/ ${v("ctB")} - رقم قومي: ${v("ctBid")} (طرف ثان مشتري)
+
+البند الأول: باع الطرف الأول للطرف الثاني ${l.type} بمساحة ${l.size} م²، تشطيب ${l.finishing}، بالعنوان: ${v("ctAddr")}.
+البند الثاني: تم البيع نظير ثمن إجمالي ${n("ctPrice")} جنيه، دفع منه الطرف الثاني عند التوقيع ${n("ctPaid")} جنيه، والباقي ${fmt((+(document.getElementById("ctPrice")||{}).value||0)-(+(document.getElementById("ctPaid")||{}).value||0))} جنيه ${l.payment==="installment"?`على أقساط لمدة ${l.years} سنين حسب الجدول المرفق`:"يُدفع عند التسليم"}.
+البند الثالث: يقر الطرف الأول بملكيته للعقار وخلوه من أي حقوق عينية أو رهونات أو نزاعات.
+البند الرابع: التسليم ${v("ctTerm")}.
+البند الخامس: يلتزم الطرف الأول بالتوقيع على عقد البيع النهائي وتقديم المستندات اللازمة للتسجيل.
+البند السادس: عمولة الوسيط ${BROKER.name} (${APP.name}) ${v("ctComm")}% من الثمن الإجمالي.
+البند السابع: تحرر هذا العقد من نسختين بيد كل طرف نسخة للعمل بها.
+
+الطرف الأول: ................        الطرف الثاني: ................
+الوسيط: ${BROKER.name} - ${BROKER.phone}`;
+}
+function pageAbout(){
+  const active=S.listings.filter(l=>l.status==="active").length, sold=S.listings.filter(l=>l.status==="sold").length;
+  const areas=[...new Set(S.listings.map(l=>l.area))].slice(0,10);
+  return `<div class="wrap" style="padding-block:22px;max-width:900px">
+  <div class="panel"><div class="broker"><div class="avatar" style="width:72px;height:72px;font-size:28px">${esc((BROKER.name||"؟").charAt(0))}</div><div><h1 style="font-size:24px">${esc(BROKER.name)}</h1><div class="muted">${esc(BROKER.office)} · سمسار موثّق</div></div></div>
+    ${EXTRA.bio?`<p style="margin:14px 0 0;white-space:pre-line">${esc(EXTRA.bio)}</p>`:""}
+    <div class="kv" style="margin-top:14px"><div><span>عقارات متاحة</span><b class="num">${active}</b></div><div><span>صفقات اتقفلت</span><b class="num">${sold}</b></div><div><span>آراء العملاء</span><b class="num">${EXTRA.reviews.length}</b></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px"><a class="btn wa" href="${waLink(BROKER.phone,"السلام عليكم يا "+BROKER.name)}" target="_blank" rel="noopener">${IC.wa} واتساب</a><a class="btn primary" href="tel:${esc(BROKER.phone)}">${IC.phone} <span class="num">${esc(BROKER.phone)}</span></a></div></div>
+  <div class="panel"><h3>المناطق اللي بشتغل فيها</h3><div class="feat">${areas.map(a=>`<span>${esc(a)}</span>`).join("")}</div></div>
+  <div class="panel"><h3>آراء العملاء</h3>${EXTRA.reviews.length?`<div class="list">${EXTRA.reviews.map(r=>`<div class="row"><div><b>${esc(r.name)}</b> <span style="color:var(--accent)">★★★★★</span><div>${esc(r.text)}</div></div></div>`).join("")}</div>`:`<div class="muted">${BROKER_MODE?"ضيف آراء عملائك من لوحة السمسار ← الإعدادات.":"لسه مفيش آراء."}</div>`}</div>
+  ${sold?`<div style="margin-top:16px"><div class="sec-head"><h2 style="font-size:19px">صفقات اتقفلت</h2></div><div class="cards">${S.listings.filter(l=>l.status==="sold").slice(0,6).map(card).join("")}</div></div>`:""}</div>`;
+}
+
+function pageLogin(){
+  if(BROKER_MODE) return `<div class="wrap" style="padding-block:40px;max-width:480px"><div class="panel"><h3>إنت عامل دخول ✓</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn primary" href="#dashboard">افتح لوحة السمسار</a><button class="btn danger" data-act="logout">خروج</button></div></div></div>`;
+  return `<div class="wrap" style="padding-block:40px;max-width:480px">
+  <form class="panel" id="loginForm"><div class="broker" style="margin-bottom:14px"><span>${LOGO_SVG}</span><div><h1 style="font-size:22px">دخول السمسار</h1><div class="small muted">العملاء مش محتاجين يعملوا دخول</div></div></div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div class="field"><label for="lgEmail">الإيميل</label><input class="inp" id="lgEmail" type="email" required autocomplete="email" dir="ltr"></div>
+    <div class="field"><label for="lgPass">الباسورد</label><input class="inp" id="lgPass" type="password" required minlength="6" autocomplete="current-password" dir="ltr"></div>
+    <button class="btn primary" type="submit">دخول</button>
+    <button class="btn" type="button" id="lgNew">أول مرة؟ اعمل حساب السمسار</button>
+    <span class="small muted">أول حساب يتعمل هو حساب السمسار الوحيد، ومحدش غيره يقدر يشوف العملاء والعمولات.</span>
+  </div></form></div>`;
+}
+let delArm=null;
+function demoBanner(){
+  const n=S.listings.filter(l=>l.demo).length+S.leads.filter(c=>c.demo).length+S.deals.filter(d=>d.demo).length;
+  return n?`<div class="panel private" style="margin-top:16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><div><b>البيانات اللي قدامك أمثلة للتجربة.</b><div class="small">لما تبقى جاهز تحط شغلك الحقيقي، امسح الأمثلة بدوسة واحدة.</div></div><button class="btn sm danger" data-act="clearDemo">${clearArm?"متأكد؟ امسح كل الأمثلة":"امسح الأمثلة"}</button></div>`:"";
+}
+let clearArm=false;
+function pageSettings(){
+  return `<div class="wrap">${dashTabs("dash-settings")}
+  <form class="panel" id="setForm" style="margin-top:12px;max-width:760px"><h3>بيانات البرنامج والمكتب</h3>
+    <div class="grid-form">
+      <div class="field"><label for="sApp">اسم البرنامج</label><input class="inp" id="sApp" required value="${esc(APP.name)}"></div>
+      <div class="field"><label for="sTag">الوصف الصغير تحت الاسم</label><input class="inp" id="sTag" value="${esc(APP.tagline)}"></div>
+      <div class="field"><label for="sName">اسم السمسار</label><input class="inp" id="sName" required value="${esc(BROKER.name)}"></div>
+      <div class="field"><label for="sPhone">رقم الموبايل والواتساب</label><input class="inp num" id="sPhone" required inputmode="tel" value="${esc(BROKER.phone)}"></div>
+      <div class="field" style="grid-column:1/-1"><label for="sOffice">اسم المكتب / العنوان</label><input class="inp" id="sOffice" value="${esc(BROKER.office)}"></div>
+      <div class="field" style="grid-column:1/-1"><label for="sBio">نبذة عنك (بتظهر في صفحة "عن السمسار")</label><textarea class="inp" id="sBio" placeholder="مثلاً: خبرة 10 سنين في عقارات التجمع والشيخ زايد…">${esc(EXTRA.bio)}</textarea></div>
+      <div class="field" style="grid-column:1/-1"><label for="sRev">آراء العملاء (كل رأي في سطر: الاسم: الكلام)</label><textarea class="inp" id="sRev" placeholder="أحمد مصطفى: اتعامل معايا بأمانة ولقيت شقتي في أسبوع">${esc(EXTRA.reviews.map(r=>r.name+": "+r.text).join("\n"))}</textarea></div>
+    </div>
+    <p class="small muted">الاسم والرقم دول بيظهروا للعملاء في كل الإعلانات وفي زرار الواتساب.</p>
+    <button class="btn primary" type="submit">احفظ الإعدادات</button>
+  </form>
+  ${demoBanner()}</div>`;
+}
+function pageProps(){
+  return `<div class="wrap">${dashTabs("dash-props")}
+    <div class="bar" style="margin-top:12px"><h2 style="font-size:20px">عقاراتي (${S.listings.length})</h2><a class="btn primary" href="#add">${IC.plus} أضف عقار</a></div>
+    <div class="tbl-wrap"><table><thead><tr><th>العقار</th><th>الجودة</th><th>المنطقة</th><th>السعر</th><th>المالك</th><th>العمولة</th><th>مهتمين</th><th>الحالة</th><th></th></tr></thead><tbody>
+    ${S.listings.map(l=>`<tr><td><a href="#p-${l.id}">${esc(l.title.length>34?l.title.slice(0,34)+"…":l.title)}</a></td><td>${qPill(quality(l))}</td><td>${esc(l.area)}</td><td>${money(l.price)}</td><td>${esc(priv(l.id).owner||"—")}</td><td class="num">${priv(l.id).commission||0}%</td><td class="num">${S.leads.filter(c=>c.listingId===l.id).length}</td>
+      <td><select class="inp" style="min-height:32px;padding:3px 8px;width:auto" data-act="statusSel" data-id="${l.id}" aria-label="الحالة">${opts([["active","متاح"],["reserved","محجوز"],["sold","اتباع/اتأجر"]],l.status)}</select></td>
+      <td style="display:flex;gap:4px"><button class="btn sm ghost" data-act="feature" data-id="${l.id}">${l.featured?"⭐ مميز":"☆ ميّزه"}</button><a class="btn sm ghost" href="#edit-${l.id}">✎ عدّل</a><button class="btn sm ghost" data-act="clone" data-id="${l.id}">⧉ انسخ</button><button class="btn sm ghost danger" data-act="delListing" data-id="${l.id}">${delArm===l.id?"متأكد؟ امسح":"امسح"}</button></td></tr>`).join("")}
+    </tbody></table></div></div>`;
+}
+function pageFavs(){
+  const r=S.listings.filter(l=>S.favs.includes(l.id));
+  return `<div class="wrap" style="padding-block:22px"><h2 style="font-size:22px;margin-bottom:14px">المفضلة</h2>${r.length?`<div class="cards">${r.map(card).join("")}</div>`:'<div class="empty">لسه مافيش حاجة في المفضلة. دوس على القلب في أي إعلان.</div>'}</div>`;
+}
+function pageCompare(){
+  const r=S.compare.map(byId).filter(Boolean);
+  if(r.length<2) return `<div class="wrap" style="padding-block:22px"><div class="empty">اختار عقارين أو تلاتة من "قارن" في كروت الإعلانات. <a href="#listings">روح للعقارات</a></div></div>`;
+  const rows=[["السعر",l=>money(l.price)+" ج.م"],["سعر المتر",l=>l.purpose==="sale"?`<span class="num">${fmt(l.price/l.size)}</span>`:"—"],["المنطقة",l=>esc(l.area)],["الكمبوند",l=>esc(l.compound||"—")],["النوع",l=>esc(l.type)],["المساحة",l=>`<span class="num">${l.size}</span> م²`],["الغرف",l=>l.beds||"—"],["الحمامات",l=>l.baths||"—"],["التشطيب",l=>esc(l.finishing)],["الاستلام",l=>l.delivery==="offplan"?"تحت الإنشاء":"استلام فوري"],["الدفع",l=>l.payment==="installment"?`مقدم ${l.down}% / ${l.years} سنين`:"كاش"],["المميزات",l=>`<span class="small" style="white-space:normal">${l.features.map(esc).join("، ")}</span>`]];
+  const best=Math.min(...r.filter(l=>l.purpose==="sale").map(l=>l.price/l.size));
+  return `<div class="wrap" style="padding-block:22px"><div class="bar"><h2 style="font-size:22px">مقارنة العقارات</h2><button class="btn sm" data-act="cmpClear">امسح المقارنة</button></div>
+  <div class="tbl-wrap"><table><thead><tr><th></th>${r.map(l=>`<th style="min-width:200px"><div style="aspect-ratio:16/10;border-radius:8px;overflow:hidden;margin-bottom:6px">${photo(l)}</div><a href="#p-${l.id}" style="font-size:14px;color:var(--ink);white-space:normal">${esc(l.title)}</a></th>`).join("")}</tr></thead>
+  <tbody>${rows.map(([k,f])=>`<tr><td><b>${k}</b></td>${r.map(l=>`<td ${k==="سعر المتر"&&l.purpose==="sale"&&l.price/l.size===best?'style="color:var(--good);font-weight:700"':""}>${f(l)}${k==="سعر المتر"&&l.purpose==="sale"&&l.price/l.size===best&&r.length>1?" ✓ الأرخص":""}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>`;
+}
+
+/* ========= التنقل ========= */
+const LOGO_SVG='<span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></span>';
+function sideHTML(cur){
+  const it=(k,t,i,cnt,c)=>`<a class="it ${cur===k?"on":""}" href="#${k}" style="--c:${c||"#0F7A63"}"><span class="ico">${i}</span><span>${t}</span>${cnt?`<span class="cnt num">${cnt}</span>`:""}</a>`;
+  const late=S.leads.filter(c=>c.next&&c.next<=today()&&!["won","lost"].includes(c.stage)).length;
+  return `<a class="logo" href="#home"><span>${LOGO_SVG}</span><div><b>${esc(APP.name)}</b><span>${esc(APP.tagline)}</span></div></a>
+  <h5>العقارات</h5>
+  ${it("home","الرئيسية",ICN.house,0,"#0F8A6C")}${it("listings","كل العقارات",ICN.city,0,"#2F7FC1")}${it("map","الخريطة",ICN.mappin,0,"#1C9AA8")}${it("favs","المفضلة",ICN.heart,S.favs.length,"#D2475B")}${S.compare.length?it("compare","المقارنة",ICN.scale,S.compare.length,"#7A5BC7"):""}${it("about","عن السمسار",ICN.badge,0,"#C98A22")}
+  ${BROKER_MODE?`<h5>لوحة السمسار</h5>
+  ${it("dashboard","نظرة عامة",ICN.chart,0,"#0F8A6C")}${it("dash-leads","العملاء",ICN.people,S.leads.filter(c=>c.stage==="new").length,"#2F7FC1")}${it("dash-cal","المواعيد",ICN.calendar,late,"#D2475B")}${it("dash-deals","العمولات",ICN.coins,0,"#C98A22")}${it("dash-props","عقاراتي",ICN.key,0,"#1C9AA8")}${it("dash-owners","الملاك",ICN.hand,0,"#7A5BC7")}${it("dash-report","التقرير الشهري",ICN.report,0,"#E07B39")}${it("dash-settings","الإعدادات",ICN.gear,0,"#5A6B67")}
+  <a class="btn primary add-btn" href="#add">${IC.plus} أضف عقار</a>`:""}
+  ${SUPA&&!isStandalone()?`<a class="it" href="#install" data-act="install" style="--c:#E07B39"><span class="ico">${ICN.house}</span><span>ثبّت البرنامج على جهازك</span></a>`:""}
+  ${SUPA?(BROKER_MODE?`<a class="it" href="#login" style="--c:#5A6B67"><span class="ico">${ICN.key}</span><span>حسابي / خروج</span></a>`:`<a class="it ${cur==="login"?"on":""}" href="#login" style="--c:#0F8A6C"><span class="ico">${ICN.key}</span><span>دخول السمسار</span></a>`):""}
+  <div class="side-foot">${esc(BROKER.name)}${BROKER.phone?` · <span class="num">${esc(BROKER.phone)}</span>`:""}</div>`;
+}
+function navHTML(cur){
+  $("#side").innerHTML=sideHTML(cur);
+  const items=[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["map","الخريطة",IC.map],["favs","المفضلة",IC.heart],["about","عن السمسار",IC.user]].concat(BROKER_MODE?[["dashboard","لوحة السمسار",IC.dash],["add","أضف عقار",IC.plus]]:[]);
+  const isDash=cur.startsWith("dash");
+  $("#nav").innerHTML=items.map(([k,t])=>`<a href="#${k}" class="${(cur===k||(k==="dashboard"&&isDash))?"on":""}">${t}${k==="favs"&&S.favs.length?`<span class="cnt num">${S.favs.length}</span>`:""}${k==="dashboard"?`<span class="cnt num">${S.leads.filter(c=>c.stage==="new").length}</span>`:""}</a>`).join("");
+  const mob=BROKER_MODE?[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["add","أضف",IC.plus],["map","الخريطة",IC.map],["dashboard","لوحتي",IC.dash]]:[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["map","الخريطة",IC.map],["favs","المفضلة",IC.heart],["about","السمسار",IC.user]];
+  $("#bottomNav").innerHTML=mob.map(([k,t,i])=>`<a href="#${k}" class="${k==="add"?"add ":""}${(cur===k||(k==="dashboard"&&isDash))?"on":""}">${i}${t}</a>`).join("");
+}
+function cmpBar(){
+  const n=S.compare.length; const h=location.hash.slice(1);
+  $("#cmpBar").innerHTML = n && h!=="compare" ? `<div class="cmp-bar"><span>اخترت <span class="num">${n}</span> للمقارنة</span><a class="btn sm accent" href="#compare">قارن دلوقتي</a><button class="btn sm" data-act="cmpClear" aria-label="امسح">✕</button></div>` : "";
+}
+function render(keepScroll){
+  const h=(location.hash.slice(1)||"home");
+  let html;
+  const brokerOnly = h==="add"||h.startsWith("dash")||h.startsWith("edit-")||h.startsWith("contract-");
+  if(h.startsWith("p-")) html=pageDetail(h.slice(2));
+  else if(brokerOnly && !BROKER_MODE) html=pageHome();
+  else if(h.startsWith("edit-")) html=pageAdd(h.slice(5));
+  else if(h.startsWith("contract-")) html=pageContract(h.slice(9));
+  else if(h==="login") html=pageLogin();
+  else html=({home:pageHome,listings:pageListings,map:pageMap,add:()=>pageAdd(),dashboard:pageDash,"dash-leads":pageLeads,"dash-deals":pageDeals,"dash-props":pageProps,"dash-settings":pageSettings,"dash-cal":pageCal,"dash-owners":pageOwners,"dash-report":pageReport,about:pageAbout,favs:pageFavs,compare:pageCompare}[h]||pageHome)();
+  const y=window.scrollY;
+  $("#app").innerHTML=html+`<footer class="footer"><div class="wrap"><span>© ${new Date().getFullYear()} ${esc(APP.name)} ${esc(APP.tagline)}</span><span>${esc(BROKER.office)}${BROKER.phone?` · <span class="num">${esc(BROKER.phone)}</span>`:""}</span></div></footer>`;
+  navHTML(h); cmpBar(); afterRender(h);
+  if(keepScroll) window.scrollTo(0,y);
+}
+let lastHash="";
+window.addEventListener("hashchange",()=>{ galIdx=0; mapSel=null; render(false); if(location.hash!==lastHash) window.scrollTo(0,0); lastHash=location.hash; });
+
+/* ========= بعد العرض: ربط الفورمات والحاسبات ========= */
+function afterRender(h){
+  // hero
+  const hs=$("#heroSearch");
+  if(hs){ let p=F.purpose||"sale";
+    hs.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{p=b.dataset.p;hs.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));});
+    hs.onsubmit=e=>{e.preventDefault();F={...F,purpose:p,q:$("#hq").value,area:$("#harea").value,type:$("#htype").value};location.hash="listings";};
+  }
+  // filters inputs
+  document.querySelectorAll("[data-f]").forEach(el=>{
+    const ev=el.type==="checkbox"?"change":(el.tagName==="SELECT"?"change":"input");
+    el.addEventListener(ev,()=>{F[el.dataset.f]=el.type==="checkbox"?el.checked:el.value;
+      clearTimeout(afterRender._t); afterRender._t=setTimeout(()=>{const id=document.activeElement?.id;render(true);if(id&&$("#"+id)){const x=$("#"+id);x.focus();if(x.setSelectionRange&&x.type==="text"){const L=x.value.length;x.setSelectionRange(L,L);}}}, el.tagName==="INPUT"&&el.type!=="checkbox"?350:0);});
+  });
+  // installment calc
+  if($("#calcOut")){ const l=byId(h.slice(2));
+    const calc=()=>{const d=+$("#cDown").value||0,y=Math.max(1,+$("#cYears").value||1),r=(+$("#cRate").value||0)/100/12;const down=l.price*d/100,rest=l.price-down,n=y*12;const m=r?rest*r/(1-Math.pow(1+r,-n)):rest/n;
+      $("#calcOut").innerHTML=`<span>المقدم: <b class="num" style="font-size:16px">${fmt(down)}</b> ج.م</span><span>القسط الشهري</span><b><span class="num">${fmt(m)}</span> ج.م</b><span class="small muted">على <span class="num">${n}</span> شهر · ربع سنوي ≈ <span class="num">${fmt(m*3)}</span> ج.م · الإجمالي <span class="num">${fmt(down+m*n)}</span> ج.م</span>`;};
+    ["cDown","cYears","cRate"].forEach(i=>$("#"+i).oninput=calc); calc(); }
+  // viewing form
+  const vf=$("#viewForm");
+  if(vf){ vf.onsubmit=e=>{e.preventDefault();const l=byId(h.slice(2)); const nm=$("#vName").value.trim(), ph=$("#vPhone").value.trim(), dt=$("#vDate").value;
+    if(BROKER_MODE){ CRM.put("leads",uid(),{name:nm,phone:ph,source:"التطبيق",stage:"new",need:{purpose:l.purpose,type:l.type,area:l.area,max:l.price,beds:l.beds},listingId:l.id,notes:"طلب معاينة يوم "+dt,next:dt,created:today()}); toast("العميل اتسجل ✓"); return; }
+    if(SUPA){ sb.from("maskan_leads").insert({id:uid(),data:{name:nm,phone:ph,source:"التطبيق",stage:"new",need:{purpose:l.purpose,type:l.type,area:l.area,max:l.price,beds:l.beds},listingId:l.id,notes:"طلب معاينة يوم "+dt,next:dt,created:today()}}).then(r=>{ if(r.error) console.warn(r.error); }); }
+    const msg=`السلام عليكم يا ${BROKER.name}، أنا ${nm} (${ph}).\nعاوز أعاين: ${l.title} - ${l.area}\nكود الإعلان: ${String(l.id).toUpperCase().slice(-6)}\nاليوم المناسب: ${dt}`;
+    vf.innerHTML=`<h3>خطوة أخيرة</h3><p style="margin:0 0 10px">دوس على الزرار عشان الرسالة تتبعت للسمسار على واتساب.</p><a class="btn wa" style="width:100%" href="${waLink(BROKER.phone,msg)}" target="_blank" rel="noopener">${IC.wa} ابعت الطلب على واتساب</a>`; }; }
+  const ls=$("#lStatus"); if(ls) ls.onchange=()=>{const l=byId(ls.dataset.id);l.status=ls.value;
+    if(ls.value==="sold"){ showDealForm=true; publishSite(l.purpose==="rent"?"اتأجر! سجّل العمولة":"اتباع! سجّل العمولة","dash-deals"); } else publishSite("اتحدثت الحالة ✓"); };
+  // add / edit form
+  const af=$("#addForm");
+  if(af){ const editId=af.querySelector("[data-edit]").dataset.edit; const E=editId?byId(editId):null;
+    let purpose=E?E.purpose:"sale",feats=new Set(E?E.features:[]),imgs=E&&E.images?[...E.images]:[];
+    af.querySelectorAll("#aPurposeSeg button").forEach(b=>b.onclick=()=>{purpose=b.dataset.v;af.querySelectorAll("#aPurposeSeg button").forEach(x=>x.classList.toggle("on",x===b));if(!E)$("#aComm").value=purpose==="rent"?50:2.5;});
+    af.querySelectorAll("#aFeat .chip").forEach(b=>b.onclick=()=>{b.classList.toggle("on");feats.has(b.dataset.v)?feats.delete(b.dataset.v):feats.add(b.dataset.v);});
+    $("#aImgs").onchange=async e=>{ const files=[...e.target.files].slice(0,6); if(!files.length) return; imgs=[]; toast("بيرفع الصور…");
+      for(const f of files){ const data=await shrink(f); let src=data;
+        if(SUPA){ try{ const blob=await (await fetch(data)).blob(); const path=uid()+".jpg"; const up=await sb.storage.from("maskan-photos").upload(path,blob,{contentType:"image/jpeg"}); if(!up.error) src=sb.storage.from("maskan-photos").getPublicUrl(path).data.publicUrl; }catch(err){ src=data; } }
+        else if(ASSETS){ try{ const blob=await (await fetch(data)).blob(); const r=await ASSETS.upload(blob); src=r.url; }catch(err){ src=data; } }
+        imgs.push(src); $("#aPrev").innerHTML=imgs.map(s=>`<button type="button"><img src="${esc(s)}" alt=""></button>`).join(""); }
+      toast("الصور جاهزة ✓"); };
+    $("#autoDesc").onclick=()=>{ const t=$("#aType").value, a=$("#aArea").value, c=$("#aComp").value.trim(), sz=+$("#aSize").value||0, bd=+$("#aBeds").value||0, bt=+$("#aBaths").value||0, fn=$("#aFin").value, pay=$("#aPay").value, dl=$("#aDel").value, pr=+$("#aPrice").value||0;
+      const parts=[`${purpose==="rent"?"للإيجار":"للبيع"} ${t} ${sz?`بمساحة ${sz} متر`:""} في ${a}${c?` داخل كمبوند ${c}`:""}.`];
+      if(bd||bt) parts.push(`${bd?`${bd} غرف نوم`:""}${bd&&bt?" و":""}${bt?`${bt} حمام`:""}، تشطيب ${fn}${$("#aFloor").value?`، الدور ${$("#aFloor").value}`:""}.`);
+      if(feats.size) parts.push(`المميزات: ${[...feats].join("، ")}.`);
+      parts.push(dl==="offplan"?"الوحدة تحت الإنشاء.":"استلام فوري.");
+      if(purpose==="sale"&&pay==="installment") parts.push(`متاح تقسيط: مقدم ${$("#aDown").value}% والباقي على ${$("#aYears").value} سنين.`);
+      else if(purpose==="sale"&&pr&&sz) parts.push(`السعر ${fmt(pr)} جنيه كاش (المتر ${fmt(pr/sz)} جنيه).`);
+      parts.push(`للمعاينة والتفاصيل كلم ${BROKER.name}.`);
+      $("#aDesc").value=parts.join("\n"); };
+    af.onsubmit=async e=>{e.preventDefault(); const id=E?E.id:uid();
+      const L={id,title:$("#aTitle").value.trim(),purpose,type:$("#aType").value,area:$("#aArea").value,compound:$("#aComp").value.trim(),price:+$("#aPrice").value,size:+$("#aSize").value,beds:+$("#aBeds").value||0,baths:+$("#aBaths").value||0,floor:$("#aFloor").value||"—",finishing:$("#aFin").value,payment:$("#aPay").value,delivery:$("#aDel").value,down:+$("#aDown").value||0,years:+$("#aYears").value||0,features:[...feats],featured:$("#aFeatOn").checked,verified:$("#aVer").checked,verifiedAt:$("#aVer").checked?(E&&E.verified&&E.verifiedAt?E.verifiedAt:today()):"",date:E?E.date:today(),desc:$("#aDesc").value||"",status:E?E.status:"active",images:imgs};
+      if(E){ const i=S.listings.findIndex(x=>x.id===id); S.listings[i]=L; } else S.listings.unshift(L);
+      await CRM.put("owners",id,{owner:$("#aOwner").value.trim(),ownerPhone:$("#aOPhone").value.trim(),commission:+$("#aComm").value||0});
+      publishSite(E?"التعديل اتحفظ ✓":"الإعلان اتنشر ✓","p-"+id); };
+  }
+  // login
+  const lg=$("#loginForm");
+  if(lg){ const go=async isNew=>{ const em=$("#lgEmail").value.trim(), pw=$("#lgPass").value; if(!em||pw.length<6){ toast("اكتب الإيميل وباسورد 6 حروف على الأقل"); return; } await sbLogin(em,pw,isNew); };
+    lg.onsubmit=e=>{e.preventDefault(); go(false);}; $("#lgNew").onclick=()=>go(true); }
+  // contract
+  const ct=$("#ctForm");
+  if(ct){ const l=byId(ct.dataset.id); const upd=()=>{$("#ctOut").value=contractText(l);}; ct.addEventListener("input",upd); upd(); $("#ctCopy").onclick=()=>copy($("#ctOut").value); }
+  // settings
+  const sf=$("#setForm");
+  if(sf){ sf.onsubmit=e=>{e.preventDefault(); APP={name:$("#sApp").value.trim(),tagline:$("#sTag").value.trim()}; EXTRA={bio:$("#sBio").value.trim(),reviews:$("#sRev").value.split("\n").map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.indexOf(":");return i>0?{name:x.slice(0,i).trim(),text:x.slice(i+1).trim()}:{name:"عميل",text:x};})}; BROKER={name:$("#sName").value.trim(),phone:$("#sPhone").value.trim(),office:$("#sOffice").value.trim()}; publishSite("الإعدادات اتحفظت ✓"); }; }
+  // lead form
+  const lf=$("#leadForm");
+  if(lf){ lf.onsubmit=e=>{e.preventDefault();CRM.put("leads",uid(),{name:$("#lName").value.trim(),phone:$("#lPhone").value.trim(),source:$("#lSrc").value,stage:"new",need:{purpose:$("#lPur").value,type:$("#lType").value,area:$("#lArea").value,max:+$("#lMax").value||0,beds:+$("#lBeds").value||0},listingId:"",notes:$("#lNotes").value,next:$("#lNext").value,created:today()});showLeadForm=false;toast("العميل اتضاف ✓");render(true);}; }
+  // commission calc
+  if($("#kOut")){ const c=()=>{const p=+$("#kPrice").value||0,pc=+$("#kPct").value||0,sp=+$("#kSplit").value||0;const tot=p*pc/100;$("#kOut").innerHTML=`<span>إجمالي العمولة: <b class="num" style="font-size:16px">${fmt(tot)}</b> ج.م</span>${sp?`<span>نصيب الشريك: <span class="num">${fmt(tot*sp/100)}</span> ج.م</span>`:""}<span>نصيبك</span><b><span class="num">${fmt(tot*(1-sp/100))}</span> ج.م</b>`;};["kPrice","kPct","kSplit"].forEach(i=>$("#"+i).oninput=c);c(); }
+  const df=$("#dealForm");
+  if(df){ df.onsubmit=e=>{e.preventDefault();CRM.put("deals",uid(),{title:$("#dTitle").value,client:$("#dClient").value,price:+$("#dPrice").value,pct:+$("#dPct").value||0,split:+$("#dSplit").value||0,status:$("#dStatus").value,date:$("#dDate").value||today(),stage:$("#dStage").value,due:$("#dDue").value});showDealForm=false;toast("الصفقة اتسجلت ✓");render(true);}; }
+}
+function shrink(file){ return new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,900/Math.max(im.width,im.height));const c=document.createElement("canvas");c.width=im.width*s;c.height=im.height*s;const x=c.getContext("2d");x.drawImage(im,0,0,c.width,c.height);const fs=Math.max(16,Math.round(c.width/22));x.font=`700 ${fs}px Alexandria, Tahoma, sans-serif`;x.textAlign="left";x.textBaseline="bottom";x.fillStyle="rgba(0,0,0,.35)";x.fillText(APP.name+" "+APP.tagline,fs*0.6+2,c.height-fs*0.5+2);x.fillStyle="rgba(255,255,255,.85)";x.fillText(APP.name+" "+APP.tagline,fs*0.6,c.height-fs*0.5);res(c.toDataURL("image/jpeg",0.72));};im.onerror=()=>res(r.result);im.src=r.result;};r.readAsDataURL(file);}); }
+
+/* ========= الأزرار ========= */
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-act]"); if(!el) return;
+  const a=el.dataset.act, id=el.dataset.id;
+  if(a==="cmp") return; // handled on change
+  if(a==="statusSel") return;
+  if(["fav","setF","clearF","mode","pin","gal","copy","share","stage","stageTo","toggleLead","toggleDeal","dealRec","dealDel","feature","cmpClear","delListing","clearDemo","shareText","toggleFeat","clone","renew","follow","valuation","logout","install"].includes(a)) e.preventDefault();
+  switch(a){
+    case "logout": sbLogout(); break;
+    case "install": doInstall(); break;
+    case "toggleFeat": { const v=el.dataset.v; F.feats=(F.feats||[]).includes(v)?F.feats.filter(x=>x!==v):[...(F.feats||[]),v]; render(true); break; }
+    case "clone": { const l=byId(id); const nid=uid(); S.listings.unshift({...JSON.parse(JSON.stringify(l)),id:nid,title:l.title+" (نسخة)",date:today(),status:"active",demo:false}); const o=priv(id); CRM.put("owners",nid,{owner:o.owner||"",ownerPhone:o.ownerPhone||"",commission:o.commission||0}); publishSite("اتعملت نسخة، عدّل اللي محتاجه","edit-"+nid); break; }
+    case "renew": { const l=byId(id); l.date=today(); publishSite("الإعلان اتجدد ✓"); break; }
+    case "touch": CRM.patch("leads",id,{lastContact:today()}); break;
+    case "follow": CRM.patch("leads",id,{next:addDays(+el.dataset.d),lastContact:today()}); toast("اتحدد ميعاد المتابعة ✓"); break;
+    case "valuation": { const l=byId(id), v=valuation(l); if(!v){ toast("مفيش عقارات شبهه كفاية للمقارنة"); break; }
+      copy(`تقييم سعر ${l.title}\nالمنطقة: ${l.area} · المساحة ${l.size} م²\nبناءً على ${v.n} عقار شبهه في نفس المنطقة:\nمتوسط سعر المتر: ${fmt(v.mid)} ج.م\nالسعر المناسب: من ${fmt(v.low)} لحد ${fmt(v.high)} ج.م\nالسعر المعروض حالياً: ${fmt(l.price)} ج.م ${l.price>v.high?"(أعلى من السوق)":l.price<v.low?"(أقل من السوق)":"(مناسب للسوق)"}\n— ${BROKER.name}، ${APP.name}`); break; }
+    case "fav": S.favs.includes(id)?S.favs=S.favs.filter(x=>x!==id):S.favs.push(id); save(); toast(S.favs.includes(id)?"اتحفظ في المفضلة ♥":"اتشال من المفضلة"); render(true); break;
+    case "setF": F[el.dataset.k]=el.dataset.v; render(true); break;
+    case "clearF": F={...F0,feats:[]}; render(true); break;
+    case "goArea": F={...F,area:el.dataset.area,q:"",type:""}; break;
+    case "goInst": F={...F,payment:"installment",purpose:"sale"}; break;
+    case "matchGo": { const c=S.leads.find(x=>x.id===id),n=c.need; F={...F0,feats:[],purpose:n.purpose,type:n.type||"",area:n.area||"",maxP:n.max?Math.round(n.max*1.1):"",beds:n.beds?String(n.beds):"",sort:"low"}; listMode="grid"; break; }
+    case "mode": listMode=el.dataset.v; render(true); break;
+    case "pin": mapSel=id; render(true); break;
+    case "gal": galIdx=+el.dataset.i; render(true); break;
+    case "copy": copy(el.dataset.v); break;
+    case "share": { const l=byId(id); copy(`${l.title}\n${l.area} · ${fmt(l.price)} ج.م\nكود الإعلان: ${String(l.id).toUpperCase().slice(-6)}\nللتواصل: ${BROKER.name} ${BROKER.phone}`); break; }
+    case "stage": { const c=S.leads.find(x=>x.id===id); const i=STAGES.findIndex(s=>s.k===c.stage)+(+el.dataset.d); const ns=STAGES[Math.max(0,Math.min(STAGES.length-1,i))].k; toast("اتنقل لـ "+STAGES.find(s=>s.k===ns).t); CRM.patch("leads",id,{stage:ns}); if(ns==="won"){showDealForm=true;location.hash="dash-deals";} break; }
+    case "stageTo": CRM.patch("leads",id,{stage:el.dataset.s}); break;
+    case "toggleLead": showLeadForm=!showLeadForm; render(true); break;
+    case "toggleDeal": showDealForm=!showDealForm; render(true); break;
+    case "dealRec": CRM.patch("deals",id,{status:"received",date:today()}); toast("مبروك! العمولة اتقبضت 💰"); break;
+    case "dealDel": CRM.del("deals",id); break;
+    case "feature": { const l=byId(id); l.featured=!l.featured; publishSite(l.featured?"بقى مميز ⭐":"اتشال من المميز"); break; }
+    case "delListing": if(delArm!==id){ delArm=id; render(true); setTimeout(()=>{ if(delArm===id){ delArm=null; render(true);} },4000); break; }
+      delArm=null; S.listings=S.listings.filter(l=>l.id!==id); CRM.del("owners",id); publishSite("الإعلان اتمسح"); break;
+    case "clearDemo": if(!clearArm){ clearArm=true; render(true); setTimeout(()=>{ clearArm=false; render(true); },4000); break; }
+      clearArm=false; (async()=>{ const ls=S.leads.filter(c=>c.demo), ds=S.deals.filter(d=>d.demo), os=Object.keys(S.owners).filter(k=>S.owners[k]&&S.owners[k].demo);
+        for(const c of ls) await CRM.del("leads",c.id); for(const d of ds) await CRM.del("deals",d.id); for(const k of os) await CRM.del("owners",k);
+        const had=S.listings.some(l=>l.demo); S.listings=S.listings.filter(l=>!l.demo); if(had) publishSite("الأمثلة اتمسحت، البرنامج جاهز لشغلك ✓"); else { render(true); toast("الأمثلة اتمسحت ✓"); } })(); break;
+    case "shareText": { const l=byId(id); copy(`🏠 ${l.title}\n📍 ${l.area}${l.compound?" - "+l.compound:""}\n📐 ${l.size} م²${l.beds?` | ${l.beds} غرف`:""}${l.baths?` | ${l.baths} حمام`:""}\n✨ ${l.finishing}${l.payment==="installment"?` | مقدم ${l.down}% وتقسيط ${l.years} سنين`:" | كاش"}\n💰 ${fmt(l.price)} ج.م${l.purpose==="rent"?" شهرياً":""}\n\n${l.desc}\n\n📞 ${BROKER.name}: ${BROKER.phone}\nكود الإعلان: ${String(l.id).toUpperCase().slice(-6)}`); break; }
+    case "cmpClear": S.compare=[]; save(); render(true); break;
+  }
+});
+document.addEventListener("change",e=>{
+  const el=e.target;
+  if(el.dataset.act==="cmp"){ const id=el.dataset.id;
+    if(el.checked){ if(S.compare.length>=3){el.checked=false;toast("أقصى حاجة 3 عقارات");return;} S.compare.push(id);} else S.compare=S.compare.filter(x=>x!==id);
+    save(); cmpBar(); }
+  if(el.dataset.act==="dealStage"){ const st=el.value; CRM.patch("deals",el.dataset.id,st==="اتقفلت"?{stage:st,status:"received",date:today()}:{stage:st}); toast("اتحدثت المرحلة ✓"); }
+  if(el.id==="repM"){ repMonth=el.value; render(true); }
+  if(el.dataset.act==="statusSel"){ const l=byId(el.dataset.id); l.status=el.value; publishSite("اتحدثت الحالة ✓"); }
+});
+document.addEventListener("keydown",e=>{ if((e.key==="Enter"||e.key===" ")&&e.target.classList?.contains("pin")){ e.preventDefault(); e.target.dispatchEvent(new MouseEvent("click",{bubbles:true})); }});
+
+/* ========= تشغيل ========= */
+document.title = APP.name + " " + APP.tagline;
+$("#brandName").textContent=APP.name; $("#brandSub").textContent=APP.tagline;
+lastHash=location.hash;
+const closeSide=()=>{ $("#side").classList.remove("open"); $("#scrim").hidden=true; };
+$("#menuBtn").onclick=()=>{ $("#side").classList.add("open"); $("#scrim").hidden=false; };
+$("#scrim").onclick=closeSide;
+window.addEventListener("hashchange",closeSide);
+render(false);
+boot();
+</script>
+
+</body>
+</html>
