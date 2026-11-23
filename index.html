@@ -82,6 +82,8 @@ button,input,select,textarea{font:inherit;color:inherit}@media (max-width:760px)
   .bottom a.on{color:var(--brand)}
   .bottom a.add{color:var(--brand-ink);background:var(--brand);border-radius:12px}
   main{padding-bottom:84px}
+  .menu-btn{display:none!important}
+  .bottom a{min-width:0;flex:1}
 }
 
 /* buttons & inputs */
@@ -1286,7 +1288,7 @@ function navHTML(cur){
   const isDash=cur.startsWith("dash");
   $("#nav").innerHTML=items.map(([k,t])=>`<a href="#${k}" class="${(cur===k||(k==="dashboard"&&isDash))?"on":""}">${t}${k==="favs"&&S.favs.length?`<span class="cnt num">${S.favs.length}</span>`:""}${k==="dashboard"?`<span class="cnt num">${S.leads.filter(c=>c.stage==="new").length}</span>`:""}</a>`).join("");
   const MORE_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
-  const mob=(BROKER_MODE?[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["add","أضف",IC.plus],["map","الخريطة",IC.map],["dashboard","لوحتي",IC.dash]]:[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["map","الخريطة",IC.map],["favs","المفضلة",IC.heart],["about","السمسار",IC.user]]);
+  const mob=(BROKER_MODE?[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["add","أضف",IC.plus],["dashboard","لوحتي",IC.dash]]:[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["map","الخريطة",IC.map],["favs","المفضلة",IC.heart]]).concat([["more","المزيد",MORE_IC]]);
   $("#bottomNav").innerHTML=mob.map(([k,t,i])=>`<a href="#${k}" ${k==="more"?'data-act="more"':""} class="${k==="add"?"add ":""}${(cur===k||(k==="dashboard"&&isDash))?"on":""}">${i}${t}</a>`).join("");
 }
 function cmpBar(){
