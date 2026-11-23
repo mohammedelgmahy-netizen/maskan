@@ -82,6 +82,8 @@ button,input,select,textarea{font:inherit;color:inherit}@media (max-width:760px)
   .bottom a.on{color:var(--brand)}
   .bottom a.add{color:var(--brand-ink);background:var(--brand);border-radius:12px}
   main{padding-bottom:84px}
+  .menu-btn{display:none!important}
+  .bottom a{min-width:0;flex:1}
 }
 
 /* buttons & inputs */
@@ -456,7 +458,8 @@ function art(l,variant=0){
   return `<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g${l.id}${variant}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky}"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><rect width="320" height="200" fill="url(#g${l.id}${variant})"/><rect y="175" width="320" height="25" fill="#9AB59F"/>${b}</svg>`;
 }
 function photo(l,i=0){
-  if(l.images && l.images.length) return `<img src="${l.images[i % l.images.length]}" alt="${esc(l.title)}">`;
+  if(l.images && l.images.length){ const fb=encodeURIComponent(art(l,i)).replace(/'/g,"%27");
+    return `<img src="${esc(l.images[i % l.images.length])}" alt="${esc(l.title)}" loading="lazy" onerror="this.onerror=null;this.outerHTML=decodeURIComponent('${fb}')">`; }
   return art(l,i);
 }
 function photoCount(l){ return l.images && l.images.length ? l.images.length : 3; }
@@ -564,10 +567,26 @@ async function sbSeedIfEmpty(){
   await sb.from("maskan_deals").upsert(s.deals.map(({id,...d})=>({id,data:d})));
   await sbLoadPublic(); await sbLoadPrivate();
 }
+/* محمد شغال في برج العرب بس: أي مثال تجريبي برا برج العرب بيتمسح أول ما السمسار يدخل */
+const HOME_AREA="برج العرب";
+async function sbCleanOutside(){
+  try{
+    const ls=S.listings.filter(l=>l.demo&&l.area!==HOME_AREA).map(l=>l.id);
+    const cs=S.leads.filter(c=>c.demo&&c.need&&c.need.area&&c.need.area!==HOME_AREA).map(c=>c.id);
+    const borgWords=/برج العرب|ملاذ|سولي|سومد|الجامعة اليابانية|دار مصر|حسن علام|الحي/;
+    const ds=S.deals.filter(d=>d.demo&&!borgWords.test(d.title||"")).map(d=>d.id);
+    if(!ls.length&&!cs.length&&!ds.length) return;
+    if(ls.length){ await sb.from("maskan_listings").delete().in("id",ls); await sb.from("maskan_owners").delete().in("id",ls); }
+    if(cs.length) await sb.from("maskan_leads").delete().in("id",cs);
+    if(ds.length) await sb.from("maskan_deals").delete().in("id",ds);
+    await sbLoadPublic(); await sbLoadPrivate();
+    toast("شلت الأمثلة اللي برا برج العرب ✓");
+  }catch(e){ console.warn(e); }
+}
 async function sbAfterLogin(){
   const {data,error}=await sb.rpc("maskan_claim");
   if(error||!data){ BROKER_MODE=false; toast("الحساب ده مش حساب السمسار"); render(true); return; }
-  BROKER_MODE=true; await sbLoadPrivate(); await sbSeedIfEmpty(); render(true);
+  BROKER_MODE=true; await sbLoadPrivate(); await sbSeedIfEmpty(); await sbCleanOutside(); render(true);
 }
 async function sbLogin(email,pass,isNew){
   const r=isNew? await sb.auth.signUp({email,password:pass}) : await sb.auth.signInWithPassword({email,password:pass});
@@ -1268,8 +1287,9 @@ function navHTML(cur){
   const items=[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["map","الخريطة",IC.map],["favs","المفضلة",IC.heart],["about","عن السمسار",IC.user]].concat(BROKER_MODE?[["dashboard","لوحة السمسار",IC.dash],["add","أضف عقار",IC.plus]]:[]);
   const isDash=cur.startsWith("dash");
   $("#nav").innerHTML=items.map(([k,t])=>`<a href="#${k}" class="${(cur===k||(k==="dashboard"&&isDash))?"on":""}">${t}${k==="favs"&&S.favs.length?`<span class="cnt num">${S.favs.length}</span>`:""}${k==="dashboard"?`<span class="cnt num">${S.leads.filter(c=>c.stage==="new").length}</span>`:""}</a>`).join("");
-  const mob=BROKER_MODE?[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["add","أضف",IC.plus],["map","الخريطة",IC.map],["dashboard","لوحتي",IC.dash]]:[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["map","الخريطة",IC.map],["favs","المفضلة",IC.heart],["about","السمسار",IC.user]];
-  $("#bottomNav").innerHTML=mob.map(([k,t,i])=>`<a href="#${k}" class="${k==="add"?"add ":""}${(cur===k||(k==="dashboard"&&isDash))?"on":""}">${i}${t}</a>`).join("");
+  const MORE_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
+  const mob=(BROKER_MODE?[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["add","أضف",IC.plus],["dashboard","لوحتي",IC.dash]]:[["home","الرئيسية",IC.home],["listings","العقارات",IC.list],["map","الخريطة",IC.map],["favs","المفضلة",IC.heart]]).concat([["more","المزيد",MORE_IC]]);
+  $("#bottomNav").innerHTML=mob.map(([k,t,i])=>`<a href="#${k}" ${k==="more"?'data-act="more"':""} class="${k==="add"?"add ":""}${(cur===k||(k==="dashboard"&&isDash))?"on":""}">${i}${t}</a>`).join("");
 }
 function cmpBar(){
   const n=S.compare.length; const h=location.hash.slice(1);
@@ -1374,10 +1394,11 @@ document.addEventListener("click",e=>{
   const a=el.dataset.act, id=el.dataset.id;
   if(a==="cmp") return; // handled on change
   if(a==="statusSel") return;
-  if(["fav","setF","clearF","mode","pin","gal","copy","share","stage","stageTo","toggleLead","toggleDeal","dealRec","dealDel","feature","cmpClear","delListing","clearDemo","shareText","toggleFeat","clone","renew","follow","valuation","logout","install"].includes(a)) e.preventDefault();
+  if(["fav","setF","clearF","mode","pin","gal","copy","share","stage","stageTo","toggleLead","toggleDeal","dealRec","dealDel","feature","cmpClear","delListing","clearDemo","shareText","toggleFeat","clone","renew","follow","valuation","logout","install","more"].includes(a)) e.preventDefault();
   switch(a){
     case "logout": sbLogout(); break;
     case "install": doInstall(); break;
+    case "more": $("#menuBtn").click(); break;
     case "toggleFeat": { const v=el.dataset.v; F.feats=(F.feats||[]).includes(v)?F.feats.filter(x=>x!==v):[...(F.feats||[]),v]; render(true); break; }
     case "clone": { const l=byId(id); const nid=uid(); S.listings.unshift({...JSON.parse(JSON.stringify(l)),id:nid,title:l.title+" (نسخة)",date:today(),status:"active",demo:false}); const o=priv(id); CRM.put("owners",nid,{owner:o.owner||"",ownerPhone:o.ownerPhone||"",commission:o.commission||0}); publishSite("اتعملت نسخة، عدّل اللي محتاجه","edit-"+nid); break; }
     case "renew": { const l=byId(id); l.date=today(); publishSite("الإعلان اتجدد ✓"); break; }
