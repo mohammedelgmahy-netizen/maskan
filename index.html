@@ -300,6 +300,21 @@ const SB_CFG = window.MASKAN_SUPABASE || null;
 const SUPA = !!(SB_CFG && window.supabase); // النسخة اللي على السيرفر (Supabase)
 let sb = SUPA ? window.supabase.createClient(SB_CFG.url, SB_CFG.key) : null;
 const DEMO = !window.claude && !SUPA; // نسخة محلية للتجربة
+/* التنقل بين الشاشات */
+const isSub=h=>/^(p-|edit-|contract-)/.test(h);
+function navGo(h,push){ const d=(history.state&&history.state.d)||0;
+  try{ push? history.pushState({d:d+1},"","#"+h) : history.replaceState({d},"","#"+h); }catch(e){ location.hash=h; return; }
+  window.dispatchEvent(new HashChangeEvent("hashchange")); }
+function nav(h){ h=String(h||"").replace(/^#/,"")||"home";
+  const st=history.state||{}; const cur=location.hash.slice(1)||"home"; const d=st.d||0;
+  if(st.side){ navPending=h; history.back(); return; }
+  if(h===cur){ render(false); window.scrollTo(0,0); return; }
+  if(isSub(h)) return navGo(h,true);
+  if(h==="home"){ if(d>0){ navPending="home"; history.go(-d); return; } return navGo(h,false); }
+  if(d===0) return navGo(h, cur==="home");
+  if(d>1){ navPending=h; history.go(-(d-1)); return; }
+  return navGo(h,false);
+}
 /* تثبيت البرنامج على الموبايل والكمبيوتر */
 let deferredInstall=null;
 const isStandalone=()=>{ try{ return matchMedia("(display-mode: standalone)").matches || navigator.standalone===true; }catch(e){ return false; } };
@@ -557,9 +572,9 @@ async function sbLogin(email,pass,isNew){
   const r=isNew? await sb.auth.signUp({email,password:pass}) : await sb.auth.signInWithPassword({email,password:pass});
   if(r.error){ toast(/Invalid login/i.test(r.error.message)?"الإيميل أو الباسورد غلط":/registered/i.test(r.error.message)?"الإيميل ده عنده حساب، اعمل دخول":/Password/i.test(r.error.message)?"الباسورد لازم 6 حروف على الأقل":"حصلت مشكلة: "+r.error.message); return false; }
   if(!r.data.session){ toast("ابعتنالك رسالة تأكيد على الإيميل، افتحها وبعدين اعمل دخول"); return false; }
-  await sbAfterLogin(); if(BROKER_MODE){ toast("أهلاً يا "+BROKER.name+" ✓"); location.hash="dashboard"; } return true;
+  await sbAfterLogin(); if(BROKER_MODE){ toast("أهلاً يا "+BROKER.name+" ✓"); nav("dashboard"); } return true;
 }
-async function sbLogout(){ await sb.auth.signOut(); BROKER_MODE=false; S.leads=[];S.deals=[];S.owners={}; location.hash="home"; render(true); toast("اتعمل خروج"); }
+async function sbLogout(){ await sb.auth.signOut(); BROKER_MODE=false; S.leads=[];S.deals=[];S.owners={}; nav("home"); render(true); toast("اتعمل خروج"); }
 const RESET_CSS = ":root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}";
 function buildPage(){
   const st=document.head && document.head.querySelector("style"); const reset=(st&&st.textContent.trim())||RESET_CSS;
@@ -569,7 +584,7 @@ function buildPage(){
     +'<script type="application/json" id="siteData">'+data+'<\/script>\n<script id="main">'+document.getElementById("main").textContent+'<\/script></body></html>';
 }
 async function publishSite(msg, goHash){
-  if(DEMO){ save(); toast(msg||"اتحفظ ✓"); if(goHash&&location.hash!=="#"+goHash) location.hash=goHash; else render(true); return true; }
+  if(DEMO){ save(); toast(msg||"اتحفظ ✓"); if(goHash&&location.hash!=="#"+goHash) nav(goHash); else render(true); return true; }
   if(SUPA){ toast("بيتحفظ…");
     const settings={appName:APP.name,tagline:APP.tagline,brokerName:BROKER.name,phone:BROKER.phone,office:BROKER.office,bio:EXTRA.bio,reviews:EXTRA.reviews};
     const r1=await sb.from("maskan_settings").upsert({id:1,data:settings});
@@ -578,7 +593,7 @@ async function publishSite(msg, goHash){
     const r3=gone.length? await sb.from("maskan_listings").delete().in("id",gone) : {error:null};
     if(r1.error||r2.error||r3.error){ dbErr(r1.error||r2.error||r3.error); return false; }
     sbListingIds=new Set(S.listings.map(l=>l.id)); document.title=APP.name+" "+APP.tagline;
-    toast(msg||"اتحفظ ✓"); if(goHash&&location.hash!=="#"+goHash) location.hash=goHash; else render(true); return true; }
+    toast(msg||"اتحفظ ✓"); if(goHash&&location.hash!=="#"+goHash) nav(goHash); else render(true); return true; }
   if(!ART){ toast("الحفظ مش متاح من هنا، افتح البرنامج من حسابك"); return false; }
   try{ sessionStorage.setItem("maskan_after", JSON.stringify({msg:msg||"اتحفظ ✓", go:goHash||location.hash.slice(1)})); }catch(e){}
   toast("بيتحفظ…");
@@ -591,7 +606,7 @@ let pendingRender=false;
 function softRender(){ const a=document.activeElement; if(a&&a.closest&&a.closest("#app form")&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)){ pendingRender=true; return; } render(true); }
 document.addEventListener("focusout",()=>setTimeout(()=>{ if(!pendingRender) return; const a=document.activeElement; if(!(a&&a.closest&&a.closest("#app form"))){ pendingRender=false; render(true); } },60));
 async function boot(){
-  try{ const a=JSON.parse(sessionStorage.getItem("maskan_after")||"null"); if(a){ sessionStorage.removeItem("maskan_after"); if(a.go&&location.hash!=="#"+a.go) location.hash=a.go; setTimeout(()=>toast(a.msg),300); } }catch(e){}
+  try{ const a=JSON.parse(sessionStorage.getItem("maskan_after")||"null"); if(a){ sessionStorage.removeItem("maskan_after"); if(a.go&&location.hash!=="#"+a.go) nav(a.go); setTimeout(()=>toast(a.msg),300); } }catch(e){}
   if(DEMO) return;
   if(SUPA){ try{ await sbLoadPublic(); render(true); const {data}=await sb.auth.getSession(); if(data&&data.session) await sbAfterLogin(); }catch(e){ console.warn(e); toast("مش قادر أوصل للسيرفر، اتأكد من النت"); } return; }
   try{
@@ -1283,7 +1298,7 @@ function afterRender(h){
   const hs=$("#heroSearch");
   if(hs){ let p=F.purpose||"sale";
     hs.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{p=b.dataset.p;hs.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));});
-    hs.onsubmit=e=>{e.preventDefault();F={...F,purpose:p,q:$("#hq").value,area:$("#harea").value,type:$("#htype").value};location.hash="listings";};
+    hs.onsubmit=e=>{e.preventDefault();F={...F,purpose:p,q:$("#hq").value,area:$("#harea").value,type:$("#htype").value};nav("listings");};
   }
   // filters inputs
   document.querySelectorAll("[data-f]").forEach(el=>{
@@ -1380,7 +1395,7 @@ document.addEventListener("click",e=>{
     case "gal": galIdx=+el.dataset.i; render(true); break;
     case "copy": copy(el.dataset.v); break;
     case "share": { const l=byId(id); copy(`${l.title}\n${l.area} · ${fmt(l.price)} ج.م\nكود الإعلان: ${String(l.id).toUpperCase().slice(-6)}\nللتواصل: ${BROKER.name} ${BROKER.phone}`); break; }
-    case "stage": { const c=S.leads.find(x=>x.id===id); const i=STAGES.findIndex(s=>s.k===c.stage)+(+el.dataset.d); const ns=STAGES[Math.max(0,Math.min(STAGES.length-1,i))].k; toast("اتنقل لـ "+STAGES.find(s=>s.k===ns).t); CRM.patch("leads",id,{stage:ns}); if(ns==="won"){showDealForm=true;location.hash="dash-deals";} break; }
+    case "stage": { const c=S.leads.find(x=>x.id===id); const i=STAGES.findIndex(s=>s.k===c.stage)+(+el.dataset.d); const ns=STAGES[Math.max(0,Math.min(STAGES.length-1,i))].k; toast("اتنقل لـ "+STAGES.find(s=>s.k===ns).t); CRM.patch("leads",id,{stage:ns}); if(ns==="won"){showDealForm=true;nav("dash-deals");} break; }
     case "stageTo": CRM.patch("leads",id,{stage:el.dataset.s}); break;
     case "toggleLead": showLeadForm=!showLeadForm; render(true); break;
     case "toggleDeal": showDealForm=!showDealForm; render(true); break;
@@ -1413,9 +1428,20 @@ document.title = APP.name + " " + APP.tagline;
 $("#brandName").textContent=APP.name; $("#brandSub").textContent=APP.tagline;
 lastHash=location.hash;
 const closeSide=()=>{ $("#side").classList.remove("open"); $("#scrim").hidden=true; };
-$("#menuBtn").onclick=()=>{ $("#side").classList.add("open"); $("#scrim").hidden=false; };
-$("#scrim").onclick=closeSide;
+$("#menuBtn").onclick=()=>{ $("#side").classList.add("open"); $("#scrim").hidden=false; try{ history.pushState({...(history.state||{}),side:1},"",location.href); }catch(e){} };
+$("#scrim").onclick=()=>{ if(history.state&&history.state.side) history.back(); else closeSide(); };
 window.addEventListener("hashchange",closeSide);
+/* زرار الرجوع زي كسارة: الشاشات الرئيسية مش بتتراكم، من أي شاشة الرجوع بيوديك للرئيسية، ومن الرئيسية بيخرج */
+let navPending=null;
+window.addEventListener("popstate",()=>{
+  if($("#side").classList.contains("open")) closeSide();
+  if(navPending!==null){ const t=navPending; navPending=null; setTimeout(()=>nav(t),0); }
+});
+document.addEventListener("click",e=>{
+  if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey) return;
+  const a=e.target.closest&&e.target.closest('a[href^="#"]'); if(!a||a.target) return;
+  e.preventDefault(); nav(a.getAttribute("href"));
+});
 render(false);
 boot();
 </script>
