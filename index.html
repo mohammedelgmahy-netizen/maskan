@@ -556,7 +556,7 @@ async function sbLoadPrivate(){
   const o={}; (c.data||[]).forEach(r=>o[r.id]=r.data); S.owners=o;
 }
 async function sbSeedIfEmpty(){
-  if(S.listings.length||S.leads.length) return;
+  return; // البيانات التجريبية متحطة على السيرفر، ومفيش إعادة تحميل تلقائي بعد "امسح الأمثلة"
   const s=seed();
   await sb.from("maskan_listings").upsert(s.listings.map(l=>({id:l.id,data:stripPriv(l)})));
   const ow=ownersOf(s.listings); await sb.from("maskan_owners").upsert(Object.keys(ow).map(k=>({id:k,data:ow[k]})));
@@ -703,7 +703,7 @@ function opts(arr,sel,ph){ return (ph!==undefined?`<option value="">${ph}</optio
 /* ========= الصفحات ========= */
 function pageHome(){
   const featured=S.listings.filter(l=>l.featured&&l.status!=="sold").slice(0,6);
-  const areaStats=Object.keys(AREAS).map(a=>{const ls=S.listings.filter(l=>l.area===a&&l.purpose==="sale"&&l.size&&l.status!=="sold");return {a,count:S.listings.filter(l=>l.area===a&&l.status!=="sold").length,ppm:ls.length?ls.reduce((s,l)=>s+l.price/l.size,0)/ls.length:0}}).filter(x=>x.count).sort((a,b)=>b.count-a.count);
+  const areaKey=l=>l.compound||l.area, areaStats=[...new Set(S.listings.map(areaKey).filter(Boolean))].map(a=>{const ls=S.listings.filter(l=>areaKey(l)===a&&l.purpose==="sale"&&l.size&&l.status!=="sold"&&l.type!=="أرض");return {a,count:S.listings.filter(l=>areaKey(l)===a&&l.status!=="sold").length,ppm:ls.length?ls.reduce((s,l)=>s+l.price/l.size,0)/ls.length:0}}).filter(x=>x.count).sort((a,b)=>b.count-a.count);
   const newLeads=S.leads.filter(l=>l.stage==="new").length;
   const due=S.leads.filter(l=>l.next&&l.next<=today()&&!["won","lost"].includes(l.stage)).length;
   return `
@@ -711,17 +711,17 @@ function pageHome(){
     <svg class="hero-skyline" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true"><path fill="#fff" d="M0 120V80h40V50h30v30h30V30h50v50h20V60h40v20h30V20h20l10-15 10 15h20v100h30V70h60v50h20V40h40v80h30V60h20V30h60v90h40V75h40v45h30V50h50v70h20V20h10l10-20 10 20h10v100h40V65h50v55h30V45h40v75h40V80h60v40z"/></svg>
     <div class="wrap">
       <h1>دوّر على بيتك الجاي في دقيقة</h1>
-      <p>شقق وفلل وشاليهات ومحلات في كل مصر، بيع وإيجار وتقسيط. كل إعلان متراجع، وسعر المتر قدامك عشان تقارن صح.</p>
+      <p>شقق وفلل ومحلات في برج العرب الجديدة وكل مشاريعها، بيع وإيجار وتقسيط. كل إعلان متراجع، وسعر المتر قدامك عشان تقارن صح.</p>
       <form class="search" id="heroSearch">
         <div class="tabs"><button type="button" class="tab ${F.purpose!=="rent"?"on":""}" data-p="sale">شراء</button><button type="button" class="tab ${F.purpose==="rent"?"on":""}" data-p="rent">إيجار</button></div>
         <div class="search-row">
-          <input class="inp" id="hq" placeholder="اكتب منطقة أو كمبوند… مثلاً: ميفيدا" value="${esc(F.q)}">
+          <input class="inp" id="hq" placeholder="اكتب منطقة أو كمبوند… مثلاً: سولي في" value="${esc(F.q)}">
           <select class="inp" id="harea">${opts(Object.keys(AREAS),F.area,"كل المناطق")}</select>
           <select class="inp" id="htype">${opts(TYPES,F.type,"كل الأنواع")}</select>
           <button class="btn primary" type="submit">دوّر</button>
         </div>
       </form>
-      <div class="quick">${["التجمع الخامس","الشيخ زايد","العاصمة الإدارية","الساحل الشمالي","المعادي"].map(a=>`<a href="#listings" data-act="goArea" data-area="${a}">${a}</a>`).join("")}<a href="#listings" data-act="goInst">تقسيط بدون فوايد</a>${SUPA&&!isStandalone()?`<a href="#install" data-act="install" style="background:rgba(255,255,255,.18)">📲 ثبّت التطبيق</a>`:""}</div>
+      <div class="quick">${(()=>{const c={};S.listings.forEach(l=>{if(l.status!=="sold"){const k=l.compound||l.area;if(k)c[k]=(c[k]||0)+1;}});return Object.keys(c).sort((a,b)=>c[b]-c[a]).slice(0,6);})().map(a=>`<a href="#listings" data-act="goQ" data-q="${esc(a)}">${esc(a)}</a>`).join("")}<a href="#listings" data-act="goInst">تقسيط بدون فوايد</a>${SUPA&&!isStandalone()?`<a href="#install" data-act="install" style="background:rgba(255,255,255,.18)">📲 ثبّت التطبيق</a>`:""}</div>
     </div>
   </section>
   <section class="block wrap">
@@ -729,8 +729,8 @@ function pageHome(){
     <div class="cards">${featured.map(card).join("")}</div>
   </section>
   <section class="block wrap">
-    <div class="sec-head"><h2>تصفح حسب المنطقة</h2><span class="small muted">متوسط سعر المتر من الإعلانات الحالية</span></div>
-    <div class="areas">${areaStats.map(x=>`<a class="area" href="#listings" data-act="goArea" data-area="${esc(x.a)}"><b>${esc(x.a)}</b><span class="small muted"><span class="num">${x.count}</span> إعلان</span>${x.ppm?`<span class="small">المتر ≈ <span class="num">${fmt(Math.round(x.ppm/1000)*1000)}</span> ج.م</span>`:'<span class="small muted">إيجار</span>'}</a>`).join("")}</div>
+    <div class="sec-head"><h2>تصفح حسب المشروع والمنطقة</h2><span class="small muted">متوسط سعر المتر من الإعلانات الحالية</span></div>
+    <div class="areas">${areaStats.map(x=>`<a class="area" href="#listings" data-act="goQ" data-q="${esc(x.a)}"><b>${esc(x.a)}</b><span class="small muted"><span class="num">${x.count}</span> إعلان</span>${x.ppm?`<span class="small">المتر ≈ <span class="num">${fmt(Math.round(x.ppm/1000)*1000)}</span> ج.م</span>`:'<span class="small muted">إيجار</span>'}</a>`).join("")}</div>
   </section>
   ${BROKER_MODE?`<section class="block wrap">
     <div class="panel" style="display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap">
@@ -1389,6 +1389,7 @@ document.addEventListener("click",e=>{
     case "setF": F[el.dataset.k]=el.dataset.v; render(true); break;
     case "clearF": F={...F0,feats:[]}; render(true); break;
     case "goArea": F={...F,area:el.dataset.area,q:"",type:""}; break;
+    case "goQ": F={...F,area:"",q:el.dataset.q,type:""}; break;
     case "goInst": F={...F,payment:"installment",purpose:"sale"}; break;
     case "matchGo": { const c=S.leads.find(x=>x.id===id),n=c.need; F={...F0,feats:[],purpose:n.purpose,type:n.type||"",area:n.area||"",maxP:n.max?Math.round(n.max*1.1):"",beds:n.beds?String(n.beds):"",sort:"low"}; listMode="grid"; break; }
     case "mode": listMode=el.dataset.v; render(true); break;
