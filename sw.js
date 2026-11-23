@@ -1,5 +1,5 @@
 // مسكن: تشغيل كتطبيق وحفظ الصفحة للفتح السريع
-const CACHE="maskan-v6";
+const CACHE="maskan-v7";
 const SHELL=["./","index.html","config.js","manifest.json","icon.svg","icon-192.png","icon-512.png","apple-touch-icon.png"];
 self.addEventListener("install",e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())); });
 self.addEventListener("activate",e=>{ e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))).then(()=>self.clients.claim())); });

@@ -76,8 +76,8 @@ button,input,select,textarea{font:inherit;color:inherit}@media (max-width:760px)
 @media (max-width:1199px){
   .nav{display:none}
   .bottom{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);
-    padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));justify-content:space-around}
-  .bottom a{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;font-size:clamp(16px,2.9vw,28px);color:var(--ink);font-weight:800;padding:6px 2px;border-radius:14px;min-width:56px;gap:4px}
+    padding:6px max(8px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));justify-content:space-around}
+  .bottom a{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;font-size:clamp(18px,3.7vw,38px);line-height:1.15;color:var(--ink);font-weight:900;padding:6px 2px;border-radius:14px;min-width:56px;gap:4px}
   .bottom a .bico{width:clamp(58px,12.5vw,125px);height:clamp(58px,12.5vw,125px);border-radius:clamp(17px,3.4vw,34px);display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 15%,transparent)}   .bottom a .bico svg{width:66%;height:66%}   .bottom a.on .bico{background:var(--c);color:#fff}
   .bottom a.on{color:var(--brand)}
   .bottom a.add{color:var(--brand-ink);background:var(--brand);border-radius:12px}
